@@ -5,42 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>投資操作</title>
     <style>
-        body { font-family: -apple-system, sans-serif; padding: 10px; background: #f2f2f7; color: #1c1c1e; }
+        body { font-family: -apple-system, sans-serif; padding: 10px; background: #f2f2f7; color: #1c1c1e; padding-bottom: 50px; }
         .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .info-box { background: #f0f0f5; padding: 10px; border-radius: 8px; text-align: center; }
         .info-val { font-size: 16px; font-weight: bold; color: #007aff; }
         
-        /* 下拉選單與按鈕 */
-        select { width: 100%; padding: 12px; border: 1px solid #007aff; border-radius: 8px; background: white; font-size: 16px; margin-bottom: 8px; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #007aff; border-radius: 8px; background: white; font-size: 16px; margin-bottom: 8px; box-sizing: border-box; }
         .trade-row { display: flex; gap: 5px; align-items: center; margin-top: 5px; }
         button { flex: 0.8; padding: 12px; border: none; font-weight: bold; color: white; border-radius: 8px; font-size:14px; }
         .btn-buy { background: #34c759; }
         .btn-sell { background: #ff3b30; }
+        .btn-action { background: #007aff; width: 100%; }
         .btn-disabled { background: #ccc; pointer-events: none; }
         
         .tag { font-size: 10px; padding: 2px 5px; border-radius: 4px; color: white; margin-left: 5px; }
         .tag-stock { background: #5856d6; }
         .tag-gold { background: #ff9500; }
         .tag-bond { background: #34c759; }
-        .bond-info { font-size: 11px; color: #2e7d32; background: #e8f5e9; padding: 4px; border-radius: 4px; margin-top: 4px; display: inline-block;}
 
-        /* 新聞彈窗 */
-        #news-modal { position: fixed; top: 20%; left: 5%; right: 5%; background: rgba(0,0,0,0.9); color: white; padding: 20px; border-radius: 12px; z-index: 200; text-align: center; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        #news-modal h2 { margin-top: 0; color: #ffeb3b; }
+        .text-up { color: #34c759; } .text-down { color: #ff3b30; } 
+        .price-change { font-size: 12px; font-weight: normal; }
+
+        .deposit-item { border-bottom: 1px solid #eee; padding: 8px 0; font-size: 13px; display: flex; justify-content: space-between; }
+        
+        #news-modal, #end-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); color: white; padding: 20px; z-index: 200; display: none; overflow-y: auto; text-align: center; }
+        #news-content { margin-top: 30vh; }
         #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px; display: none; z-index: 100; }
     </style>
 </head>
 <body>
     <div id="news-modal">
-        <h2 id="modal-title">市場快訊</h2>
-        <p id="modal-desc">內容...</p>
-        <button onclick="document.getElementById('news-modal').style.display='none'" style="background:#2196f3; width:auto;">我知道了</button>
+        <div id="news-content">
+            <h2 id="modal-title" style="color: #ffeb3b;">市場快訊</h2>
+            <p id="modal-desc" style="font-size:18px;">內容...</p>
+            <button onclick="document.getElementById('news-modal').style.display='none'" style="background:#2196f3; width:auto; margin-top:20px;">我知道了</button>
+        </div>
+    </div>
+
+    <div id="end-screen">
+        <div style="margin-top: 15vh;">
+            <h1 style="color: #ffeb3b;">🎉 遊戲結束 🎉</h1>
+            <h3>你的最終資產</h3>
+            <h1 id="final-assets" style="font-size: 40px; margin: 10px 0;">$0</h1>
+            <div id="final-breakdown" style="text-align: left; background: #333; padding: 20px; border-radius: 10px; display: inline-block; min-width: 250px;"></div>
+        </div>
     </div>
 
     <div id="login-screen" class="card" style="text-align: center; margin-top: 50px;">
         <h2>投資大賽登入</h2>
-        <input type="text" id="username" placeholder="輸入姓名 / 組別" style="width:100%; padding:10px; margin-bottom:10px; box-sizing:border-box;">
+        <input type="text" id="username" placeholder="輸入姓名 / 組別">
         <button class="btn-buy" style="width:100%" onclick="joinGame()">進入市場</button>
     </div>
 
@@ -55,12 +69,29 @@
 
         <div class="card" style="border: 1px solid #c8e6c9; background: #f1f8e9;">
             <h3 style="margin-top:0; color:#2e7d32">定期存款 (Time Deposit)</h3>
-            <div style="font-size:12px; color:#555; margin-bottom:10px;">*利率: <50萬 (3%), >=50萬 (5%)</div>
-            <div style="margin-bottom: 5px;">目前定存: <strong id="p-deposit">$0</strong></div>
-            <div style="display:flex; gap:5px;">
-                <input type="number" id="deposit-input" placeholder="金額" style="width:50%; margin-bottom:0;">
-                <button style="background:#2e7d32; flex:0.5;" onclick="doDeposit('deposit')">存入</button>
-                <button style="background:#5d4037; flex:0.5;" onclick="doDeposit('withdraw')">取出</button>
+            <div style="font-size:12px; color:#555; margin-bottom:10px;">
+                <span style="color:#d32f2f; font-weight:bold;">注意：存款期間無法取出。</span><br>
+                到期後本金與利息將自動存入現金。
+            </div>
+            
+            <div style="background:white; padding:10px; border-radius:8px; margin-bottom:10px;">
+                <label style="font-size:12px; font-weight:bold;">建立新定存:</label>
+                <div style="display:flex; gap:5px; margin-top:5px;">
+                    <input type="number" id="deposit-amount" placeholder="金額" style="flex:1; margin-bottom:0;">
+                </div>
+                <div style="display:flex; gap:5px; margin-top:5px;">
+                    <select id="deposit-duration" style="flex:1; margin-bottom:0;">
+                        <option value="3">3個月 (1回合) - 0.125% p.a.</option>
+                        <option value="6">6個月 (2回合) - 0.125% p.a.</option>
+                        <option value="12">12個月 (4回合) - 0.150% p.a.</option>
+                    </select>
+                    <button class="btn-action" style="flex:0.4; background:#2e7d32;" onclick="createDeposit()">存入</button>
+                </div>
+            </div>
+
+            <div style="font-size:12px; font-weight:bold; color:#555;">生效中的定存 (無法手動取出):</div>
+            <div id="deposit-list">
+                <div style="text-align:center; color:#999; padding:10px;">無</div>
             </div>
         </div>
 
@@ -71,7 +102,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
-        let myData = null, currentMarket = null;
+        let myData = null, currentMarket = null, currentRound = 0;
 
         function joinGame() {
             const name = document.getElementById('username').value;
@@ -82,14 +113,48 @@
             }
         }
 
-        socket.on('init_player', data => { updateAll(data); if(data.lastEvent) showNews(data.lastEvent); });
+        socket.on('init_player', data => { 
+            if(data.reload) window.location.reload();
+            currentRound = data.round;
+            updateAll(data); 
+            if(data.lastEvent) showNews(data.lastEvent); 
+        });
+
         socket.on('update_player', data => { updateAll({ player: data.player, market: currentMarket }); if(data.msg) showToast(data.msg); });
         socket.on('error_msg', msg => showToast(msg));
+        
         socket.on('new_round', data => {
             currentMarket = data.market;
-            document.getElementById('round-display').innerText = `第 ${data.round} 回合`;
+            currentRound = data.round;
+            document.getElementById('round-display').innerText = `第 ${data.round} 回合 (累計 ${data.round*3} 個月)`;
             renderMarket();
+            if(myData) renderDeposits(myData.deposits); // 更新定存倒數
             if(data.event) showNews(data.event);
+        });
+
+        socket.on('game_over', data => {
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('news-modal').style.display = 'none';
+            
+            let me = data.players[socket.id] || myData;
+            
+            // 計算最終資產
+            let stockVal = 0;
+            for(let code in me.portfolio) if(data.market[code]) stockVal += me.portfolio[code] * data.market[code].price;
+            
+            // 定存本金算入資產
+            let depositTotal = 0;
+            if(me.deposits) me.deposits.forEach(d => depositTotal += d.amount);
+
+            let total = me.cash + depositTotal + stockVal;
+
+            document.getElementById('final-assets').innerText = '$' + Math.floor(total).toLocaleString();
+            document.getElementById('final-breakdown').innerHTML = `
+                <p>現金結餘: $${Math.floor(me.cash).toLocaleString()}</p>
+                <p>定存本金 (鎖定中): $${Math.floor(depositTotal).toLocaleString()}</p>
+                <p>證券市值: $${Math.floor(stockVal).toLocaleString()}</p>
+            `;
+            document.getElementById('end-screen').style.display = 'block';
         });
 
         function showNews(event) {
@@ -101,17 +166,44 @@
         function updateAll(data) {
             myData = data.player;
             if(data.market) currentMarket = data.market;
-            if(data.round) document.getElementById('round-display').innerText = `第 ${data.round} 回合`;
+            if(data.round !== undefined) currentRound = data.round;
+            
+            document.getElementById('round-display').innerText = `第 ${currentRound} 回合`;
 
             let stockVal = 0;
             if(currentMarket) {
                 for(let code in myData.portfolio) stockVal += myData.portfolio[code] * currentMarket[code].price;
             }
-            let total = myData.cash + myData.timeDeposit + stockVal;
+            
+            let depositTotal = 0;
+            if(myData.deposits) myData.deposits.forEach(d => depositTotal += d.amount);
+
+            let total = myData.cash + depositTotal + stockVal;
             document.getElementById('p-cash').innerText = '$' + Math.floor(myData.cash).toLocaleString();
-            document.getElementById('p-deposit').innerText = '$' + Math.floor(myData.timeDeposit).toLocaleString();
             document.getElementById('p-total').innerText = '$' + Math.floor(total).toLocaleString();
+            
+            renderDeposits(myData.deposits);
             renderMarket();
+        }
+
+        function renderDeposits(deposits) {
+            const list = document.getElementById('deposit-list');
+            if(!deposits || deposits.length === 0) {
+                list.innerHTML = '<div style="text-align:center; color:#999; padding:10px;">無</div>';
+                return;
+            }
+            list.innerHTML = deposits.map(d => {
+                let roundsLeft = d.maturityRound - currentRound;
+                return `
+                <div class="deposit-item">
+                    <div>
+                        <strong>$${d.amount.toLocaleString()}</strong> <span style="color:#666">(${d.duration}個月)</span>
+                    </div>
+                    <div style="color: ${roundsLeft<=0 ? 'green':'#e65100'}; font-weight:bold;">
+                        ${roundsLeft <= 0 ? "即將入帳" : `🔒 鎖定中 (剩 ${roundsLeft} 回合)`}
+                    </div>
+                </div>`;
+            }).join('');
         }
 
         function renderMarket() {
@@ -119,41 +211,46 @@
             const list = document.getElementById('market-list');
             list.innerHTML = Object.keys(currentMarket).map(code => {
                 const item = currentMarket[code];
-                const holding = myData.portfolio[code] || 0;
+                const holdingQty = myData.portfolio[code] || 0; // 這裡是「股數」
                 
-                // 1. 計算最大可買數量 (Max Buy)
+                // === 修正：清楚區分 股數(Shares) 與 手數(Lots) ===
+                const lotsHeld = Math.floor(holdingQty / item.lotSize);
+                
                 let costPerLot = item.price * item.lotSize;
                 let feeMultiplier = item.type === 'stock' ? 1.004 : 1; 
                 let maxBuy = Math.floor(myData.cash / (costPerLot * feeMultiplier));
                 
                 if(item.type === 'bond' && (costPerLot < item.minEntry)) {
                     let minLots = Math.ceil(item.minEntry / costPerLot);
-                    if (maxBuy < minLots) maxBuy = 0; // 錢不夠入門檻
+                    if (maxBuy < minLots) maxBuy = 0; 
                 }
 
-                // 2. 生成買入選單 (限製 100 手)
-                let buyOptions = "";
-                if (maxBuy === 0) buyOptions = `<option value="0">資金不足</option>`;
-                else {
-                    let limit = Math.min(maxBuy, 100); // MAX OPTION SET TO 100
-                    for(let i=1; i<=limit; i++) buyOptions += `<option value="${i}">${i} 手 ($${Math.floor(i*costPerLot).toLocaleString()})</option>`;
+                let unitName = item.type === 'gold' ? '兩' : '手';
+                let shareUnit = item.type === 'gold' ? '兩' : (item.type === 'bond' ? '單位' : '股');
+
+                let buyOptions = maxBuy === 0 ? `<option value="0">資金不足 / 未達門檻</option>` : "";
+                if (maxBuy > 0) {
+                    let limit = Math.min(maxBuy, 20);
+                    for(let i=1; i<=limit; i++) buyOptions += `<option value="${i}">${i} ${unitName} ($${Math.floor(i*costPerLot).toLocaleString()})</option>`;
                 }
 
-                // 3. 生成賣出選單 (限製 100 手)
-                let sellOptions = "";
-                let maxSell = Math.floor(holding / item.lotSize);
-                if (maxSell === 0) sellOptions = `<option value="0">無持倉</option>`;
-                else {
-                    let limit = Math.min(maxSell, 100); // MAX OPTION SET TO 100
-                    for(let i=1; i<=limit; i++) sellOptions += `<option value="${i}">${i} 手</option>`;
+                let sellOptions = lotsHeld === 0 ? `<option value="0">無持倉</option>` : "";
+                if (lotsHeld > 0) {
+                    let limit = Math.min(lotsHeld, 50);
+                    for(let i=1; i<=limit; i++) sellOptions += `<option value="${i}">${i} ${unitName}</option>`;
                 }
+
+                let change = item.change || 0;
+                let pct = item.changePercent || 0;
+                let colorClass = change >= 0 ? "text-up" : "text-down";
+                let sign = change >= 0 ? "+" : "";
+                let changeDisplay = change !== 0 ? `<span class="price-change ${colorClass}"> ${sign}${change.toFixed(2)} (${sign}${pct.toFixed(1)}%)</span>` : `<span class="price-change" style="color:#999">-</span>`;
 
                 let tagType = item.type === 'gold' ? 'gold' : (item.type === 'bond' ? 'bond' : 'stock');
                 let tagName = item.type === 'gold' ? '黃金' : (item.type === 'bond' ? '債券' : '股票');
-                let extraInfo = item.type === 'bond' ? `<div class="bond-info">年息: ${item.coupon}% | 門檻: $${item.minEntry.toLocaleString()}</div>` : '';
-                let buyBtnClass = maxBuy > 0 ? "btn-buy" : "btn-disabled";
-                let sellBtnClass = maxSell > 0 ? "btn-sell" : "btn-disabled";
-
+                let lotDisplay = item.type === 'gold' ? "每兩" : `每手 ${item.lotSize} ${shareUnit}`;
+                let extraInfo = item.type === 'bond' ? `<div style="font-size:11px; color:#2e7d32; background:#e8f5e9; padding:2px;">年息: ${item.coupon}% | 門檻: $${item.minEntry.toLocaleString()}</div>` : '';
+                
                 return `
                 <div class="card">
                     <div style="display:flex; justify-content:space-between;">
@@ -163,25 +260,29 @@
                             ${extraInfo}
                         </div>
                         <div style="text-align:right;">
-                            <div style="font-size:18px; font-weight:bold;">$${item.price.toFixed(0)}</div>
-                            <div style="font-size:12px; color:#666;">每手 ${item.lotSize}</div>
+                            <div style="font-size:18px; font-weight:bold;">$${item.price.toFixed(2)}<br>${changeDisplay}</div>
+                            <div style="font-size:12px; color:#666;">${lotDisplay}</div>
                         </div>
                     </div>
-                    <div style="background:#f9f9f9; padding:5px; border-radius:4px; font-size:13px; margin: 8px 0;">
-                        持有: <strong>${holding}</strong> (市值: $${Math.floor(holding * item.price).toLocaleString()})
+                    
+                    <div style="background:#f9f9f9; padding:8px; border-radius:4px; font-size:14px; margin: 8px 0;">
+                        持有: <strong>${holdingQty} ${shareUnit}</strong> <span style="color:#666; font-size:12px;">(共 ${lotsHeld} ${unitName})</span>
                     </div>
-                    <div style="margin-top:10px;">
-                        <div style="font-size:12px; color:#34c759;">買入數量</div>
-                        <div class="trade-row">
-                            <select id="buy-select-${code}">${buyOptions}</select>
-                            <button class="${buyBtnClass}" onclick="trade('buy', '${code}')">買入</button>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:5px;">
+                        <div>
+                            <div style="font-size:12px; color:#34c759;">買入</div>
+                            <div class="trade-row">
+                                <select id="buy-select-${code}">${buyOptions}</select>
+                                <button class="${maxBuy > 0 ? 'btn-buy' : 'btn-disabled'}" onclick="trade('buy', '${code}')">買入</button>
+                            </div>
                         </div>
-                    </div>
-                    <div style="margin-top:10px;">
-                        <div style="font-size:12px; color:#ff3b30;">賣出數量</div>
-                        <div class="trade-row">
-                            <select id="sell-select-${code}">${sellOptions}</select>
-                            <button class="${sellBtnClass}" onclick="trade('sell', '${code}')">賣出</button>
+                        <div>
+                            <div style="font-size:12px; color:#ff3b30;">賣出</div>
+                            <div class="trade-row">
+                                <select id="sell-select-${code}">${sellOptions}</select>
+                                <button class="${lotsHeld > 0 ? 'btn-sell' : 'btn-disabled'}" onclick="trade('sell', '${code}')">賣出</button>
+                            </div>
                         </div>
                     </div>
                 </div>`;
@@ -194,12 +295,15 @@
             if(val === "0" || !val) return;
             socket.emit('trade', action, code, parseInt(val));
         }
-        function doDeposit(action) {
-            const val = document.getElementById('deposit-input').value;
-            if(!val) return showToast("請輸入金額");
-            socket.emit('time_deposit_action', action, parseInt(val));
-            document.getElementById('deposit-input').value = '';
+
+        function createDeposit() {
+            const amt = document.getElementById('deposit-amount').value;
+            const dur = document.getElementById('deposit-duration').value;
+            if(!amt || amt <= 0) return showToast("請輸入有效金額");
+            socket.emit('create_deposit', amt, dur);
+            document.getElementById('deposit-amount').value = '';
         }
+
         function showToast(msg) {
             const t = document.getElementById('toast');
             t.innerText = msg; t.style.display = 'block';
