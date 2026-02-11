@@ -14,11 +14,12 @@ const USD_RATE = 7.8;
 const FEE_RATE = 0.003585; 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
-// --- 定存利率表 ---
+// --- 定存利率表 (1 Round = 3 Months) ---
 const DEPOSIT_OPTS = {
-    3:  { label: "3 個月 (1 回合)", rounds: 1, rate: 0.00125 },
-    6:  { label: "6 個月 (2 回合)", rounds: 2, rate: 0.00125 },
-    12: { label: "12 個月 (4 回合)", rounds: 4, rate: 0.00150 }
+    3:  { label: "3 個月 (1 回合)", rounds: 1, rate: 0.00125 }, // 0.125% p.a.
+    6:  { label: "6 個月 (2 回合)", rounds: 2, rate: 0.00125 }, // 0.125% p.a.
+    9: { label: "9 個月 (3 回合)", rounds: 3, rate: 0.00150 }, // 0.150% p.a.
+    12: { label: "12 個月 (4 回合)", rounds: 4, rate: 0.00150 } // 0.150% p.a.
 };
 
 // --- 初始市場 ---
@@ -62,20 +63,34 @@ if (fs.existsSync(DATA_FILE)) { try { gameState = JSON.parse(fs.readFileSync(DAT
 function saveGame() { fs.writeFileSync(DATA_FILE, JSON.stringify(gameState, null, 2)); }
 
 io.on('connection', (socket) => {
+    // --- 登入邏輯 (含 UUID 驗證) ---
     socket.on('join_game', (type, payload) => {
         if (type === 'host') {
             if (payload !== ADMIN_PASSWORD) return socket.emit('error_msg', '密碼錯誤');
             socket.emit('host_login_success');
             updateHost();
         } else if (type === 'player') {
-            let name = payload;
-            let existingId = Object.keys(gameState.players).find(id => gameState.players[id].name === name);
-            if (existingId) {
-                gameState.players[socket.id] = gameState.players[existingId];
-                delete gameState.players[existingId];
+            // payload: { name: "John", userId: "uuid-123" }
+            const { name, userId } = payload;
+            
+            // 檢查是否有舊連線 (重連)
+            let existingKey = Object.keys(gameState.players).find(id => gameState.players[id].userId === userId);
+            // 檢查名字是否被佔用
+            let nameTakenKey = Object.keys(gameState.players).find(id => gameState.players[id].name === name);
+
+            if (nameTakenKey && gameState.players[nameTakenKey].userId !== userId) {
+                return socket.emit('login_failed', '名稱已被使用，請換一個名字！');
+            }
+
+            if (existingKey) {
+                // 老玩家重連：轉移資料到新的 Socket ID
+                gameState.players[socket.id] = gameState.players[existingKey];
+                if (existingKey !== socket.id) delete gameState.players[existingKey];
             } else {
+                // 新玩家
                 gameState.players[socket.id] = {
                     name: name || `Player-${socket.id.substr(0,4)}`,
+                    userId: userId,
                     cash: 1000000, 
                     deposits: [],
                     portfolio: {} 
@@ -83,6 +98,7 @@ io.on('connection', (socket) => {
                 Object.keys(INITIAL_MARKET).forEach(code => gameState.players[socket.id].portfolio[code] = 0);
             }
             saveGame();
+            
             if(gameState.status === 'ended') {
                 socket.emit('game_over', { players: gameState.players, market: gameState.market });
             } else {
@@ -92,6 +108,7 @@ io.on('connection', (socket) => {
         }
     });
 
+    // --- 交易 ---
     socket.on('trade', (action, code, lots) => {
         if(gameState.status === 'ended') return socket.emit('error_msg', "遊戲已結束");
         let player = gameState.players[socket.id];
@@ -100,7 +117,8 @@ io.on('connection', (socket) => {
 
         lots = parseInt(lots);
         if (isNaN(lots) || lots <= 0) return socket.emit('error_msg', "無效數量");
-        
+        if (lots > 100) return socket.emit('error_msg', "單次交易上限為 100 手");
+
         let quantity = lots * item.lotSize;
         let amount = item.price * quantity;
         let fee = item.type === 'stock' ? amount * FEE_RATE : 0; 
@@ -125,6 +143,7 @@ io.on('connection', (socket) => {
         updateHost();
     });
 
+    // --- 定存 ---
     socket.on('create_deposit', (amount, durationMonths) => {
         if(gameState.status === 'ended') return;
         let player = gameState.players[socket.id];
@@ -133,7 +152,6 @@ io.on('connection', (socket) => {
         
         if (!player || amount <= 0) return socket.emit('error_msg', "無效金額");
         if (player.cash < amount) return socket.emit('error_msg', "現金不足");
-        
         const opt = DEPOSIT_OPTS[durationMonths];
         if (!opt) return socket.emit('error_msg', "無效的存款期限");
 
@@ -146,16 +164,16 @@ io.on('connection', (socket) => {
             startRound: gameState.round,
             maturityRound: gameState.round + opt.rounds
         });
-
         socket.emit('update_player', { player, msg: `成功建立 ${opt.label} 定存` });
         saveGame();
         updateHost();
     });
 
-    // --- 主持人操作: 下一回合 (包含修復邏輯) ---
+    // --- 回合控製 ---
     socket.on('next_round_action', () => {
         if(gameState.status === 'ended') return;
         gameState.round++;
+        
         triggerRandomEvent();
         processEndOfRound();
         saveGame();
@@ -163,7 +181,7 @@ io.on('connection', (socket) => {
         // 1. 廣播新回合
         io.emit('new_round', { round: gameState.round, market: gameState.market, event: gameState.lastEvent });
 
-        // 2. [修復] 強制推送最新資產給每個玩家，解決定存顯示卡住的問題
+        // 2. 強製推送最新資產給每個玩家 (解決前端定存顯示卡住的問題)
         for (let playerId in gameState.players) {
             io.to(playerId).emit('update_player', { player: gameState.players[playerId], msg: null });
         }
@@ -207,7 +225,7 @@ function triggerRandomEvent() {
 function processEndOfRound() {
     for (let id in gameState.players) {
         let p = gameState.players[id];
-        // 定存解鎖
+        // 1. 定存到期自動解鎖
         let activeDeposits = [];
         p.deposits.forEach(dep => {
             if (gameState.round >= dep.maturityRound) {
@@ -218,7 +236,8 @@ function processEndOfRound() {
             }
         });
         p.deposits = activeDeposits; 
-        // 債券派息
+
+        // 2. 債券派息
         for(let code in p.portfolio) {
             let item = gameState.market[code];
             if (item.type === 'bond' && p.portfolio[code] > 0) {
