@@ -2,64 +2,79 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <title>總控制台 - 股市大亨</title>
+    <title>控制台</title>
     <style>
-        body { font-family: sans-serif; background: #222; color: #eee; display: flex; height: 100vh; margin: 0; }
-        .sidebar { width: 320px; padding: 20px; background: #333; border-right: 1px solid #444; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .main { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
-        
-        #news-banner {
-            background: #d32f2f; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;
-            display: none; animation: flash 1s;
+        :root {
+            --mac-bg: #1e1e1e;
+            --mac-sidebar: #252526;
+            --mac-item: #333333;
+            --mac-text: #eeeeee;
+            --mac-blue: #0a84ff;
         }
-        @keyframes flash { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
-        #news-title { font-size: 24px; font-weight: bold; margin-bottom: 5px; }
+        body { font-family: -apple-system, sans-serif; background: var(--mac-bg); color: var(--mac-text); display: flex; height: 100vh; margin: 0; }
+        
+        .sidebar { width: 300px; padding: 20px; background: var(--mac-sidebar); border-right: 1px solid #000; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .main { flex: 1; padding: 30px; overflow-y: auto; }
+        
+        h2, h3 { color: #fff; font-weight: 600; margin-bottom: 10px; }
 
-        .stat-box { background: #444; padding: 10px; margin-bottom: 8px; border-radius: 5px; display: flex; justify-content: space-between; font-size: 14px; }
-        .tag { font-size: 10px; padding: 2px 4px; border-radius: 3px; color: black; margin-right: 5px;}
-        .player-row { background: #333; margin-bottom: 10px; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid transparent; }
-        .rank-1 { border-left-color: gold; } .rank-2 { border-left-color: silver; } .rank-3 { border-left-color: #cd7f32; }
+        .stat-box { background: var(--mac-item); padding: 10px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; font-size: 13px; align-items: center; }
+        .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; color: black; font-weight: bold; margin-right: 8px;}
         
-        button { width: 100%; padding: 15px; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-bottom: 5px;}
-        .btn-next { background: #2196f3; }
-        .btn-stop { background: #ff9800; color: black; font-weight: bold; }
-        .btn-reset { background: #b71c1c; margin-top: auto; font-size: 14px; }
+        .player-row { 
+            background: var(--mac-item); 
+            margin-bottom: 12px; padding: 15px; 
+            border-radius: 10px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-left: 4px solid transparent; 
+            transition: transform 0.2s;
+        }
+        .rank-1 { border-left-color: #ffd700; background: #443e2a; } 
+        .rank-2 { border-left-color: #c0c0c0; } 
+        .rank-3 { border-left-color: #cd7f32; }
         
-        .up { color: #4caf50; } .down { color: #f44336; }
+        button { width: 100%; padding: 12px; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; margin-bottom: 8px; font-weight: 600; transition: filter 0.2s;}
+        button:hover { filter: brightness(1.1); }
+        .btn-next { background: var(--mac-blue); }
+        .btn-stop { background: #ff9f0a; color: black; }
+        .btn-reset { background: #ff453a; margin-top: auto; }
         
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; display: flex; justify-content: center; align-items: center; flex-direction: column; }
-        #login-box { background: #333; padding: 30px; border-radius: 10px; text-align: center; width: 300px; }
-        #login-pass { width: 90%; padding: 10px; margin-bottom: 10px; font-size: 16px; }
+        .up { color: #32d74b; } .down { color: #ff453a; }
+        
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        #login-box { background: #2c2c2e; padding: 30px; border-radius: 16px; text-align: center; width: 300px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        #login-pass { width: 90%; padding: 12px; margin-bottom: 15px; font-size: 16px; border-radius: 8px; border: none; background: #1c1c1e; color: white; outline: none; text-align: center;}
     </style>
 </head>
 <body>
     <div id="login-overlay">
         <div id="login-box">
-            <h2>管理員登入</h2>
-            <input type="password" id="login-pass" placeholder="輸入密碼">
-            <button class="btn-next" onclick="attemptLogin()">登入</button>
-            <div id="login-err" style="color:red; display:none; margin-top:10px;">密碼錯誤</div>
+            <h3>管理員登入</h3>
+            <input type="password" id="login-pass" placeholder="Password">
+            <button class="btn-next" onclick="attemptLogin()">Enter</button>
+            <div id="login-err" style="color:#ff453a; display:none; margin-top:10px; font-size:13px;">密碼錯誤</div>
         </div>
     </div>
 
     <div class="sidebar">
         <h2 id="round-title">準備階段</h2>
+        <div style="font-size: 12px; color: #888; margin-bottom: 10px;">控制面板</div>
         
         <button class="btn-next" onclick="socket.emit('next_round_action')" id="btn-next">開始 Round 1</button>
-        <button class="btn-stop" onclick="if(confirm('確定要結束遊戲嗎？所有玩家將看到結算畫面。')) socket.emit('end_game_action')" id="btn-stop">🛑 結束遊戲</button>
+        <button class="btn-stop" onclick="if(confirm('確定要結束遊戲嗎？')) socket.emit('end_game_action')" id="btn-stop">結束遊戲</button>
 
-        <h3>市場報價</h3>
+        <h3 style="margin-top: 20px; font-size: 14px; text-transform: uppercase; color: #666;">市場監控</h3>
         <div id="market-list"></div>
         
-        <button class="btn-reset" onclick="if(confirm('警告：這將刪除所有數據並重啟。確定?')) socket.emit('reset_game')">⚠️ 重置遊戲</button>
+        <button class="btn-reset" onclick="if(confirm('警告：這將刪除所有數據並重啟。確定?')) socket.emit('reset_game')">重置系統</button>
     </div>
 
     <div class="main">
-        <div id="news-banner">
-            <div id="news-title">BREAKING NEWS</div>
+        <div id="news-banner" style="background: #ff3b30; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none;">
+            <div id="news-title" style="font-weight: bold; font-size: 18px;">NEWS</div>
             <div id="news-desc">...</div>
         </div>
-        <h2>排行榜 <span id="status-tag" style="font-size:14px; background:#444; padding:5px; border-radius:5px;">進行中</span></h2>
+        <h2>實時排行榜 <span id="status-tag" style="font-size:12px; background:#3a3a3c; padding:4px 8px; border-radius:6px; color: #888;">等待中</span></h2>
         <div id="leaderboard"></div>
     </div>
 
@@ -76,16 +91,16 @@
         socket.on('error_msg', (msg) => { document.getElementById('login-err').style.display = 'block'; document.getElementById('login-err').innerText = msg; });
 
         socket.on('host_update', (data) => {
-            document.getElementById('round-title').innerText = data.round === 0 ? "準備階段" : `Round ${data.round} (${data.round*3}個月)`;
+            document.getElementById('round-title').innerText = data.round === 0 ? "準備階段" : `Round ${data.round} (${data.round*3}m)`;
             document.getElementById('btn-next').innerText = `進入 Round ${data.round+1}`;
             
             let statusTag = document.getElementById('status-tag');
             if(data.status === 'ended') {
-                statusTag.innerText = "已結束"; statusTag.style.background = "#d32f2f";
+                statusTag.innerText = "已結束"; statusTag.style.color = "#ff453a";
                 document.getElementById('btn-next').style.display = 'none';
                 document.getElementById('btn-stop').style.display = 'none';
             } else {
-                statusTag.innerText = "進行中"; statusTag.style.background = "#2e7d32";
+                statusTag.innerText = "進行中"; statusTag.style.color = "#32d74b";
                 document.getElementById('btn-next').style.display = 'block';
                 document.getElementById('btn-stop').style.display = 'block';
             }
@@ -105,14 +120,14 @@
             const list = document.getElementById('market-list');
             list.innerHTML = Object.keys(market).map(code => {
                 const item = market[code];
-                let color = '#90caf9';
-                if(item.type === 'gold') color = '#fff59d';
-                if(item.type === 'bond') color = '#a5d6a7';
+                let color = '#0a84ff';
+                if(item.type === 'gold') color = '#ffd60a';
+                if(item.type === 'bond') color = '#32d74b';
                 
                 let change = item.change || 0;
                 let pct = item.changePercent || 0;
                 let changeColor = change > 0 ? "up" : (change < 0 ? "down" : "");
-                let displayChange = change !== 0 ? `<span class="${changeColor}" style="font-size:12px;">${pct.toFixed(1)}%</span>` : ``;
+                let displayChange = change !== 0 ? `<span class="${changeColor}" style="font-size:11px;">${pct.toFixed(1)}%</span>` : ``;
 
                 return `<div class="stat-box"><div style="flex:1"><span class="tag" style="background:${color}">${item.name}</span></div><div style="text-align:right;"><div style="font-weight:bold">$${item.price.toFixed(2)}</div>${displayChange}</div></div>`;
             }).join('');
@@ -123,25 +138,22 @@
             let ranking = Object.values(players).map(p => {
                 let stockVal = 0;
                 for(let code in p.portfolio) if(market[code]) stockVal += p.portfolio[code] * market[code].price;
-                
-                // 加總定存本金
                 let depositTotal = 0;
                 if(p.deposits) p.deposits.forEach(d => depositTotal += d.amount);
-
                 return { ...p, stockVal, total: p.cash + depositTotal + stockVal };
             }).sort((a, b) => b.total - a.total);
 
             list.innerHTML = ranking.map((p, i) => `
                 <div class="player-row rank-${i+1}">
                     <div>
-                        <span style="font-size: 1.2em; font-weight: bold;">#${i+1} ${p.name}</span>
-                        <div style="color: #aaa; font-size: 0.9em;">
+                        <span style="font-size: 16px; font-weight: 600; color:white;">#${i+1} ${p.name}</span>
+                        <div style="color: #aaa; font-size: 12px; margin-top:4px;">
                             現金: $${Math.floor(p.cash).toLocaleString()} | 
                             定存: $${Math.floor(p.deposits ? p.deposits.reduce((sum,d)=>sum+d.amount,0) : 0).toLocaleString()} | 
                             證券: $${Math.floor(p.stockVal).toLocaleString()}
                         </div>
                     </div>
-                    <div style="font-size: 1.5em; font-weight: bold;">$${Math.floor(p.total).toLocaleString()}</div>
+                    <div style="font-size: 20px; font-weight: bold; color:white;">$${Math.floor(p.total).toLocaleString()}</div>
                 </div>`).join('');
         }
     </script>

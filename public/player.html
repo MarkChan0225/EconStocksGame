@@ -2,99 +2,207 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>投資操作</title>
     <style>
-        body { font-family: -apple-system, sans-serif; padding: 10px; background: #f2f2f7; color: #1c1c1e; padding-bottom: 50px; }
-        .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .info-box { background: #f0f0f5; padding: 10px; border-radius: 8px; text-align: center; }
-        .info-val { font-size: 16px; font-weight: bold; color: #007aff; }
+        :root {
+            --ios-bg: #f2f2f7;
+            --ios-card: #ffffff;
+            --ios-blue: #007aff;
+            --ios-green: #34c759;
+            --ios-red: #ff3b30;
+            --ios-gray: #8e8e93;
+            --ios-input-bg: #e5e5ea;
+            --ios-border: #c6c6c8;
+            --ios-text: #000000;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; 
+            margin: 0; padding: 16px; 
+            background: var(--ios-bg); 
+            color: var(--ios-text); 
+            padding-bottom: 80px; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h2, h3 { margin-top: 0; font-weight: 700; letter-spacing: -0.5px; }
+
+        .card { 
+            background: var(--ios-card); 
+            padding: 16px; 
+            margin-bottom: 16px; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
+        }
+
+        /* iOS Style Inputs */
+        select, input { 
+            width: 100%; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 10px; 
+            background: var(--ios-input-bg); 
+            font-size: 17px; 
+            margin-bottom: 8px; 
+            box-sizing: border-box; 
+            color: var(--ios-text);
+            outline: none;
+            -webkit-appearance: none;
+        }
         
-        select, input { width: 100%; padding: 12px; border: 1px solid #007aff; border-radius: 8px; background: white; font-size: 16px; margin-bottom: 8px; box-sizing: border-box; }
-        .trade-row { display: flex; gap: 5px; align-items: center; margin-top: 5px; }
-        button { flex: 0.8; padding: 12px; border: none; font-weight: bold; color: white; border-radius: 8px; font-size:14px; }
-        .btn-buy { background: #34c759; }
-        .btn-sell { background: #ff3b30; }
-        .btn-action { background: #007aff; width: 100%; }
-        .btn-disabled { background: #ccc; pointer-events: none; }
+        /* Stats Grid */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        .info-box { 
+            background: var(--ios-input-bg); 
+            padding: 12px; 
+            border-radius: 12px; 
+            text-align: center; 
+        }
+        .info-label { font-size: 13px; color: var(--ios-gray); margin-bottom: 4px; }
+        .info-val { font-size: 20px; font-weight: 700; color: var(--ios-blue); letter-spacing: -0.5px; }
+
+        /* Buttons */
+        .trade-row { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+        button { 
+            flex: 1; 
+            padding: 12px; 
+            border: none; 
+            font-weight: 600; 
+            color: white; 
+            border-radius: 12px; 
+            font-size: 15px; 
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        button:active { opacity: 0.7; }
+        .btn-buy { background: var(--ios-green); }
+        .btn-sell { background: var(--ios-red); }
+        .btn-action { background: var(--ios-blue); width: 100%; }
+        .btn-disabled { background: var(--ios-input-bg); color: var(--ios-gray); pointer-events: none; }
         
-        .tag { font-size: 10px; padding: 2px 5px; border-radius: 4px; color: white; margin-left: 5px; }
+        /* Tags & Text */
+        .tag { font-size: 11px; padding: 4px 8px; border-radius: 100px; color: white; margin-left: 6px; font-weight: 600; vertical-align: middle;}
         .tag-stock { background: #5856d6; }
         .tag-gold { background: #ff9500; }
         .tag-bond { background: #34c759; }
 
-        .text-up { color: #34c759; } .text-down { color: #ff3b30; } 
-        .price-change { font-size: 12px; font-weight: normal; }
+        .text-up { color: var(--ios-green); } 
+        .text-down { color: var(--ios-red); } 
+        .price-change { font-size: 13px; font-weight: 500; }
 
-        .deposit-item { border-bottom: 1px solid #eee; padding: 8px 0; font-size: 13px; display: flex; justify-content: space-between; }
+        /* Deposit List */
+        .deposit-item { 
+            border-bottom: 1px solid #efefef; 
+            padding: 12px 0; 
+            font-size: 14px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        }
+        .deposit-item:last-child { border-bottom: none; }
         
-        #news-modal, #end-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); color: white; padding: 20px; z-index: 200; display: none; overflow-y: auto; text-align: center; }
-        #news-content { margin-top: 30vh; }
-        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px; display: none; z-index: 100; }
+        /* Glassmorphism Modals */
+        #news-modal, #end-screen { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: rgba(0,0,0,0.4); 
+            backdrop-filter: blur(10px);
+            z-index: 200; display: none; 
+            align-items: center; justify-content: center;
+        }
+        .modal-card {
+            background: var(--ios-card);
+            width: 85%;
+            max-width: 400px;
+            padding: 24px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        #toast { 
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
+            background: rgba(50,50,50,0.9); color: white; 
+            padding: 12px 24px; border-radius: 50px; 
+            display: none; z-index: 100; font-size: 14px; font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Bond Info Tag */
+        .bond-info {
+            font-size: 11px; color: var(--ios-green); background: rgba(52, 199, 89, 0.1); 
+            padding: 4px 8px; border-radius: 6px; display: inline-block; margin-top: 4px;
+        }
     </style>
 </head>
 <body>
     <div id="news-modal">
-        <div id="news-content">
-            <h2 id="modal-title" style="color: #ffeb3b;">市場快訊</h2>
-            <p id="modal-desc" style="font-size:18px;">內容...</p>
-            <button onclick="document.getElementById('news-modal').style.display='none'" style="background:#2196f3; width:auto; margin-top:20px;">我知道了</button>
+        <div class="modal-card">
+            <div style="font-size: 40px; margin-bottom: 10px;">📢</div>
+            <h2 id="modal-title" style="font-size: 20px;">市場快訊</h2>
+            <p id="modal-desc" style="font-size: 16px; color: #333; line-height: 1.4;">內容...</p>
+            <button onclick="document.getElementById('news-modal').style.display='none'" style="background:var(--ios-blue); width:100%; margin-top:10px;">我知道了</button>
         </div>
     </div>
 
     <div id="end-screen">
-        <div style="margin-top: 15vh;">
-            <h1 style="color: #ffeb3b;">🎉 遊戲結束 🎉</h1>
-            <h3>你的最終資產</h3>
-            <h1 id="final-assets" style="font-size: 40px; margin: 10px 0;">$0</h1>
-            <div id="final-breakdown" style="text-align: left; background: #333; padding: 20px; border-radius: 10px; display: inline-block; min-width: 250px;"></div>
+        <div class="modal-card">
+            <h1 style="color: var(--ios-text); margin-bottom: 5px;">🎉 遊戲結束</h1>
+            <p style="color: var(--ios-gray); margin-bottom: 20px;">最終結算</p>
+            <h1 id="final-assets" style="font-size: 42px; margin: 0 0 20px 0; color: var(--ios-blue);">$0</h1>
+            <div id="final-breakdown" style="text-align: left; background: var(--ios-input-bg); padding: 15px; border-radius: 12px; font-size: 14px;"></div>
         </div>
     </div>
 
-    <div id="login-screen" class="card" style="text-align: center; margin-top: 50px;">
-        <h2>投資大賽登入</h2>
-        <input type="text" id="username" placeholder="輸入姓名 / 組別">
-        <button class="btn-buy" style="width:100%" onclick="joinGame()">進入市場</button>
+    <div id="login-screen" style="height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 20px;">
+        <div class="card" style="text-align: center; padding: 40px 20px;">
+            <h2 style="margin-bottom: 20px;">股市大亨</h2>
+            <input type="text" id="username" placeholder="輸入姓名 / 組別" style="text-align: center;">
+            <button class="btn-action" style="margin-top: 10px;" onclick="joinGame()">進入市場</button>
+        </div>
     </div>
 
     <div id="game-screen" style="display:none;">
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h1 style="font-size: 28px; font-weight: 800; margin: 0;">我的資產</h1>
+            <span id="round-display" style="background: var(--ios-input-bg); padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--ios-gray);">載入中...</span>
+        </div>
+
         <div class="card">
-            <h3 id="round-display">準備中...</h3>
             <div class="info-grid">
-                <div class="info-box">現金<br><span class="info-val" id="p-cash">$0</span></div>
-                <div class="info-box">總資產<br><span class="info-val" id="p-total">$0</span></div>
+                <div class="info-box">
+                    <div class="info-label">現金</div>
+                    <div class="info-val" id="p-cash">$0</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">總資產</div>
+                    <div class="info-val" id="p-total">$0</div>
+                </div>
             </div>
         </div>
 
-        <div class="card" style="border: 1px solid #c8e6c9; background: #f1f8e9;">
-            <h3 style="margin-top:0; color:#2e7d32">定期存款 (Time Deposit)</h3>
-            <div style="font-size:12px; color:#555; margin-bottom:10px;">
-                <span style="color:#d32f2f; font-weight:bold;">注意：存款期間無法取出。</span><br>
-                到期後本金與利息將自動存入現金。
+        <div class="card">
+            <h3 style="color:var(--ios-green); font-size: 18px;">定期存款</h3>
+            <div style="font-size:13px; color:var(--ios-gray); margin-bottom:12px;">
+                資金鎖定，到期自動入帳。
             </div>
             
-            <div style="background:white; padding:10px; border-radius:8px; margin-bottom:10px;">
-                <label style="font-size:12px; font-weight:bold;">建立新定存:</label>
-                <div style="display:flex; gap:5px; margin-top:5px;">
-                    <input type="number" id="deposit-amount" placeholder="金額" style="flex:1; margin-bottom:0;">
-                </div>
-                <div style="display:flex; gap:5px; margin-top:5px;">
-                    <select id="deposit-duration" style="flex:1; margin-bottom:0;">
-                        <option value="3">3個月 (1回合) - 0.125% p.a.</option>
-                        <option value="6">6個月 (2回合) - 0.125% p.a.</option>
-                        <option value="12">12個月 (4回合) - 0.150% p.a.</option>
+            <div style="background:var(--ios-input-bg); padding:12px; border-radius:12px; margin-bottom:15px;">
+                <div style="display:flex; gap:8px;">
+                    <input type="number" id="deposit-amount" placeholder="金額" style="flex:1; margin:0; background: white;">
+                    <select id="deposit-duration" style="flex:1.2; margin:0; background: white;">
+                        <option value="3">3個月 (0.125%)</option>
+                        <option value="6">6個月 (0.125%)</option>
+                        <option value="12">12個月 (0.150%)</option>
                     </select>
-                    <button class="btn-action" style="flex:0.4; background:#2e7d32;" onclick="createDeposit()">存入</button>
                 </div>
+                <button class="btn-action" style="background:var(--ios-green); margin-top: 8px;" onclick="createDeposit()">立即存入</button>
             </div>
 
-            <div style="font-size:12px; font-weight:bold; color:#555;">生效中的定存 (無法手動取出):</div>
-            <div id="deposit-list">
-                <div style="text-align:center; color:#999; padding:10px;">無</div>
-            </div>
+            <div id="deposit-list"></div>
         </div>
 
+        <h3 style="margin: 20px 0 10px 5px; color: var(--ios-gray); font-size: 14px; text-transform: uppercase;">市場報價</h3>
         <div id="market-list"></div>
     </div>
     <div id="toast"></div>
@@ -126,41 +234,35 @@
         socket.on('new_round', data => {
             currentMarket = data.market;
             currentRound = data.round;
-            document.getElementById('round-display').innerText = `第 ${data.round} 回合 (累計 ${data.round*3} 個月)`;
+            document.getElementById('round-display').innerText = `Round ${data.round} (${data.round*3}個月)`;
             renderMarket();
-            if(myData) renderDeposits(myData.deposits); // 更新定存倒數
+            if(myData) renderDeposits(myData.deposits); 
             if(data.event) showNews(data.event);
         });
 
         socket.on('game_over', data => {
             document.getElementById('game-screen').style.display = 'none';
             document.getElementById('news-modal').style.display = 'none';
-            
             let me = data.players[socket.id] || myData;
-            
-            // 計算最終資產
             let stockVal = 0;
             for(let code in me.portfolio) if(data.market[code]) stockVal += me.portfolio[code] * data.market[code].price;
-            
-            // 定存本金算入資產
             let depositTotal = 0;
             if(me.deposits) me.deposits.forEach(d => depositTotal += d.amount);
-
             let total = me.cash + depositTotal + stockVal;
 
             document.getElementById('final-assets').innerText = '$' + Math.floor(total).toLocaleString();
             document.getElementById('final-breakdown').innerHTML = `
-                <p>現金結餘: $${Math.floor(me.cash).toLocaleString()}</p>
-                <p>定存本金 (鎖定中): $${Math.floor(depositTotal).toLocaleString()}</p>
-                <p>證券市值: $${Math.floor(stockVal).toLocaleString()}</p>
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>現金</span> <span>$${Math.floor(me.cash).toLocaleString()}</span></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>定存</span> <span>$${Math.floor(depositTotal).toLocaleString()}</span></div>
+                <div style="display:flex; justify-content:space-between;"><span>證券</span> <span>$${Math.floor(stockVal).toLocaleString()}</span></div>
             `;
-            document.getElementById('end-screen').style.display = 'block';
+            document.getElementById('end-screen').style.display = 'flex';
         });
 
         function showNews(event) {
-            document.getElementById('modal-title').innerText = "📢 " + event.title;
+            document.getElementById('modal-title').innerText = event.title;
             document.getElementById('modal-desc').innerText = event.desc;
-            document.getElementById('news-modal').style.display = 'block';
+            document.getElementById('news-modal').style.display = 'flex';
         }
 
         function updateAll(data) {
@@ -168,7 +270,7 @@
             if(data.market) currentMarket = data.market;
             if(data.round !== undefined) currentRound = data.round;
             
-            document.getElementById('round-display').innerText = `第 ${currentRound} 回合`;
+            document.getElementById('round-display').innerText = `Round ${currentRound} (${currentRound*3}m)`;
 
             let stockVal = 0;
             if(currentMarket) {
@@ -189,7 +291,7 @@
         function renderDeposits(deposits) {
             const list = document.getElementById('deposit-list');
             if(!deposits || deposits.length === 0) {
-                list.innerHTML = '<div style="text-align:center; color:#999; padding:10px;">無</div>';
+                list.innerHTML = '<div style="text-align:center; color:#999; font-size:13px; padding:10px;">目前沒有定存</div>';
                 return;
             }
             list.innerHTML = deposits.map(d => {
@@ -197,10 +299,11 @@
                 return `
                 <div class="deposit-item">
                     <div>
-                        <strong>$${d.amount.toLocaleString()}</strong> <span style="color:#666">(${d.duration}個月)</span>
+                        <div style="font-weight:600;">$${d.amount.toLocaleString()}</div>
+                        <div style="font-size:12px; color:#8e8e93;">${d.duration}個月期</div>
                     </div>
-                    <div style="color: ${roundsLeft<=0 ? 'green':'#e65100'}; font-weight:bold;">
-                        ${roundsLeft <= 0 ? "即將入帳" : `🔒 鎖定中 (剩 ${roundsLeft} 回合)`}
+                    <div style="font-size:12px; font-weight:600; color: ${roundsLeft<=0 ? '#34c759':'#ff9500'}; background: ${roundsLeft<=0 ? 'rgba(52,199,89,0.1)' : 'rgba(255,149,0,0.1)'}; padding:4px 8px; border-radius:6px;">
+                        ${roundsLeft <= 0 ? "結算中..." : `🔒 剩 ${roundsLeft} 回合`}
                     </div>
                 </div>`;
             }).join('');
@@ -211,9 +314,7 @@
             const list = document.getElementById('market-list');
             list.innerHTML = Object.keys(currentMarket).map(code => {
                 const item = currentMarket[code];
-                const holdingQty = myData.portfolio[code] || 0; // 這裡是「股數」
-                
-                // === 修正：清楚區分 股數(Shares) 與 手數(Lots) ===
+                const holdingQty = myData.portfolio[code] || 0;
                 const lotsHeld = Math.floor(holdingQty / item.lotSize);
                 
                 let costPerLot = item.price * item.lotSize;
@@ -228,12 +329,14 @@
                 let unitName = item.type === 'gold' ? '兩' : '手';
                 let shareUnit = item.type === 'gold' ? '兩' : (item.type === 'bond' ? '單位' : '股');
 
-                let buyOptions = maxBuy === 0 ? `<option value="0">資金不足 / 未達門檻</option>` : "";
+                // 買入選單
+                let buyOptions = maxBuy === 0 ? `<option value="0">餘額不足</option>` : "";
                 if (maxBuy > 0) {
                     let limit = Math.min(maxBuy, 20);
                     for(let i=1; i<=limit; i++) buyOptions += `<option value="${i}">${i} ${unitName} ($${Math.floor(i*costPerLot).toLocaleString()})</option>`;
                 }
 
+                // 賣出選單
                 let sellOptions = lotsHeld === 0 ? `<option value="0">無持倉</option>` : "";
                 if (lotsHeld > 0) {
                     let limit = Math.min(lotsHeld, 50);
@@ -248,41 +351,37 @@
 
                 let tagType = item.type === 'gold' ? 'gold' : (item.type === 'bond' ? 'bond' : 'stock');
                 let tagName = item.type === 'gold' ? '黃金' : (item.type === 'bond' ? '債券' : '股票');
-                let lotDisplay = item.type === 'gold' ? "每兩" : `每手 ${item.lotSize} ${shareUnit}`;
-                let extraInfo = item.type === 'bond' ? `<div style="font-size:11px; color:#2e7d32; background:#e8f5e9; padding:2px;">年息: ${item.coupon}% | 門檻: $${item.minEntry.toLocaleString()}</div>` : '';
+                let extraInfo = item.type === 'bond' ? `<br><span class="bond-info">年息 ${item.coupon}%</span>` : '';
                 
                 return `
                 <div class="card">
-                    <div style="display:flex; justify-content:space-between;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                         <div>
-                            <strong>${item.name}</strong> <span class="tag tag-${tagType}">${tagName}</span><br>
-                            <span style="color:#666; font-size:12px;">代號: ${code}</span>
-                            ${extraInfo}
+                            <div style="font-weight:700; font-size:17px;">${item.name} <span class="tag tag-${tagType}">${tagName}</span></div>
+                            <div style="color:#8e8e93; font-size:13px; margin-top:2px;">${code} ${extraInfo}</div>
                         </div>
                         <div style="text-align:right;">
-                            <div style="font-size:18px; font-weight:bold;">$${item.price.toFixed(2)}<br>${changeDisplay}</div>
-                            <div style="font-size:12px; color:#666;">${lotDisplay}</div>
+                            <div style="font-size:18px; font-weight:700;">$${item.price.toFixed(2)}</div>
+                            ${changeDisplay}
                         </div>
                     </div>
                     
-                    <div style="background:#f9f9f9; padding:8px; border-radius:4px; font-size:14px; margin: 8px 0;">
-                        持有: <strong>${holdingQty} ${shareUnit}</strong> <span style="color:#666; font-size:12px;">(共 ${lotsHeld} ${unitName})</span>
+                    <div style="background:var(--ios-input-bg); padding:8px 12px; border-radius:8px; font-size:13px; margin: 12px 0; color: #555;">
+                        持有: <strong style="color:black;">${holdingQty} ${shareUnit}</strong> (${lotsHeld} ${unitName})
                     </div>
 
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:5px;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
                         <div>
-                            <div style="font-size:12px; color:#34c759;">買入</div>
                             <div class="trade-row">
-                                <select id="buy-select-${code}">${buyOptions}</select>
-                                <button class="${maxBuy > 0 ? 'btn-buy' : 'btn-disabled'}" onclick="trade('buy', '${code}')">買入</button>
+                                <select id="buy-select-${code}" style="margin:0; background:var(--ios-input-bg);">${buyOptions}</select>
                             </div>
+                            <button class="${maxBuy > 0 ? 'btn-buy' : 'btn-disabled'}" style="width:100%; margin-top:6px;" onclick="trade('buy', '${code}')">買入</button>
                         </div>
                         <div>
-                            <div style="font-size:12px; color:#ff3b30;">賣出</div>
                             <div class="trade-row">
-                                <select id="sell-select-${code}">${sellOptions}</select>
-                                <button class="${lotsHeld > 0 ? 'btn-sell' : 'btn-disabled'}" onclick="trade('sell', '${code}')">賣出</button>
+                                <select id="sell-select-${code}" style="margin:0; background:var(--ios-input-bg);">${sellOptions}</select>
                             </div>
+                            <button class="${lotsHeld > 0 ? 'btn-sell' : 'btn-disabled'}" style="width:100%; margin-top:6px;" onclick="trade('sell', '${code}')">賣出</button>
                         </div>
                     </div>
                 </div>`;
