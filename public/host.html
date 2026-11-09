@@ -2,157 +2,142 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <title>控製臺</title>
+    <title>控制台 | Editorial</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+        
         :root {
-            --bg: #0b0e11;
-            --surface: #141820;
-            --surface-2: #1a1f2e;
-            --border: rgba(255,255,255,0.06);
-            --text: #eaf0f6;
-            --text-dim: #6b7a8d;
-            --accent: #3b82f6;
-            --accent-glow: rgba(59,130,246,0.15);
-            --green: #22c55e;
-            --red: #ef4444;
-            --amber: #f59e0b;
-            --gold: #fbbf24;
-            --silver: #94a3b8;
-            --bronze: #d97706;
+            --bg: #F5F5F0;
+            --surface: #FFFFFF;
+            --surface-2: #FAFAFA;
+            --border: #111111;
+            --border-light: #E6E3DF;
+            --text: #111111;
+            --text-dim: #686868;
+            --green: #1B5E20;
+            --red: #B71C1C;
+            --font-sans: 'Inter', -apple-system, sans-serif;
+            --font-serif: 'Playfair Display', serif;
         }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+        body { font-family: var(--font-sans); background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; letter-spacing: -0.2px;}
+        ::-webkit-scrollbar { width: 0; }
 
         .sidebar {
-            width: 320px; padding: 24px; background: var(--surface);
+            width: 340px; padding: 32px 24px; background: var(--surface);
             border-right: 1px solid var(--border); overflow-y: auto;
-            display: flex; flex-direction: column; gap: 8px;
+            display: flex; flex-direction: column; gap: 16px;
         }
-        .sidebar-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
-        .sidebar-header h2 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
-        .round-badge {
-            background: var(--accent-glow); color: var(--accent); font-size: 11px; font-weight: 600;
-            padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(59,130,246,0.2);
-        }
+        .sidebar-header { margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 16px;}
+        .sidebar-header h2 { font-size: 28px; font-weight: 500; font-family: var(--font-serif); letter-spacing: -0.5px; }
+        
         .section-label {
-            font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px;
-            color: var(--text-dim); margin: 16px 0 8px;
+            font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
+            color: var(--text-dim); margin: 24px 0 8px;
         }
 
-        .main { flex: 1; padding: 32px 40px; overflow-y: auto; background: var(--bg); }
+        .main { flex: 1; padding: 48px; overflow-y: auto; background: var(--bg); }
 
         .stat-box {
-            background: var(--surface-2); padding: 10px 12px; margin-bottom: 6px; border-radius: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid var(--border); transition: background 0.2s;
+            background: var(--surface); padding: 16px; margin-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: flex-start;
+            border: 1px solid var(--border); transition: box-shadow 0.2s;
         }
-        .stat-box:hover { background: rgba(59,130,246,0.05); }
-        .market-name { font-size: 12px; font-weight: 600; color: var(--text); }
-        .market-code { font-size: 10px; color: var(--text-dim); }
-        .market-price { font-size: 13px; font-weight: 700; color: var(--text); }
+        .stat-box:hover { box-shadow: 4px 4px 0px rgba(0,0,0,0.05); }
+        
+        .market-name { font-size: 14px; font-weight: 600; color: var(--text); font-family: var(--font-serif); letter-spacing: 0; margin-top: 6px;}
+        .market-code { font-size: 10px; color: var(--text-dim); font-weight: 500; }
+        .market-price { font-size: 18px; font-weight: 500; color: var(--text); font-family: var(--font-serif); }
+        
         .tag {
-            font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; margin-bottom: 2px;
+            font-size: 9px; padding: 4px 6px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px; display: inline-block;
+            border: 1px solid var(--border); background: transparent; color: var(--text);
         }
-        .tag-stock { background: rgba(99,102,241,0.15); color: #818cf8; }
-        .tag-bond { background: rgba(34,197,94,0.15); color: #4ade80; }
-        .tag-gold { background: rgba(251,191,36,0.15); color: #fbbf24; }
 
         .up { color: var(--green); } .down { color: var(--red); }
 
         .player-row {
-            background: var(--surface); margin-bottom: 10px; padding: 18px 20px; border-radius: 14px;
+            background: var(--surface); margin-bottom: 16px; padding: 24px;
             display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid var(--border); transition: all 0.25s ease;
+            border: 1px solid var(--border); transition: all 0.2s ease;
         }
-        .player-row:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.1); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+        .player-row:hover { box-shadow: 6px 6px 0px rgba(0,0,0,0.05); transform: translate(-2px, -2px); }
+        
         .rank-badge {
-            width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center;
-            justify-content: center; font-weight: 800; font-size: 14px; margin-right: 14px; flex-shrink: 0;
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; 
+            font-weight: 500; font-size: 20px; font-family: var(--font-serif); margin-right: 20px; flex-shrink: 0;
+            border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
         }
-        .rank-1 .rank-badge { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #451a03; }
-        .rank-2 .rank-badge { background: linear-gradient(135deg, #94a3b8, #64748b); color: #0f172a; }
-        .rank-3 .rank-badge { background: linear-gradient(135deg, #d97706, #b45309); color: #451a03; }
-        .rank-default .rank-badge { background: var(--surface-2); color: var(--text-dim); }
+        .rank-1 .rank-badge { background: var(--text); color: var(--surface); }
 
         .player-info { display: flex; align-items: center; flex: 1; min-width: 0; }
-        .player-name { font-size: 15px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .player-detail { font-size: 12px; color: var(--text-dim); margin-top: 3px; display: flex; gap: 12px; }
-        .player-detail span { display: flex; align-items: center; gap: 3px; }
-        .player-total { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; white-space: nowrap; margin-left: 16px; }
+        .player-name { font-size: 18px; font-weight: 600; color: var(--text); font-family: var(--font-serif); letter-spacing: -0.5px;}
+        .player-detail { font-size: 11px; color: var(--text-dim); margin-top: 6px; display: flex; gap: 16px; text-transform: uppercase; letter-spacing: 1px;}
+        .player-total { font-size: 28px; font-weight: 500; color: var(--text); letter-spacing: -0.5px; font-family: var(--font-serif); white-space: nowrap; margin-left: 24px; }
 
         button {
-            width: 100%; padding: 11px 16px; color: white; border: none; border-radius: 10px;
-            cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
+            width: 100%; padding: 16px; color: var(--surface); border: 1px solid var(--border); border-radius: 0;
+            cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 1.5px;
         }
-        button:hover { filter: brightness(1.1); transform: translateY(-1px); }
-        button:active { transform: translateY(0); }
-        .btn-next { background: linear-gradient(135deg, #3b82f6, #2563eb); margin-bottom: 6px; }
-        .btn-stop { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; margin-bottom: 6px; }
-        .btn-reset { background: transparent; border: 1px solid rgba(239,68,68,0.3); color: var(--red); margin-top: auto; }
-        .btn-reset:hover { background: rgba(239,68,68,0.1); }
+        button:hover { transform: translate(2px, 2px); }
+        .btn-next { background: var(--text); margin-bottom: 8px; }
+        .btn-stop { background: var(--surface); color: var(--text); margin-bottom: 8px; border-style: dashed; }
+        .btn-reset { background: transparent; border: 1px solid var(--border); color: var(--red); margin-top: auto; }
+        .btn-reset:hover { background: rgba(183,28,28,0.05); }
 
         .news-banner {
-            background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(239,68,68,0.05));
-            border: 1px solid rgba(239,68,68,0.2); color: var(--text); padding: 16px 20px;
-            border-radius: 14px; margin-bottom: 24px; display: none;
+            background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 24px;
+            margin-bottom: 40px; display: none; box-shadow: 8px 8px 0px rgba(0,0,0,0.05);
         }
-        .news-banner .news-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--red); margin-bottom: 6px; }
-        .news-banner .news-title { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
-        .news-banner .news-desc { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+        .news-banner .news-tag { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--text); margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        .news-banner .news-title { font-weight: 500; font-size: 24px; margin-bottom: 8px; font-family: var(--font-serif); }
+        .news-banner .news-desc { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
 
-        .leaderboard-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-        .leaderboard-header h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+        .leaderboard-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; border-bottom: 2px solid var(--border); padding-bottom: 16px; }
+        .leaderboard-header h2 { font-size: 32px; font-weight: 500; font-family: var(--font-serif); letter-spacing: -1px; }
         .status-tag {
-            font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px;
-            display: flex; align-items: center; gap: 5px;
+            font-size: 10px; font-weight: 600; padding: 6px 12px; border-radius: 0;
+            display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px;
+            border: 1px solid var(--border); background: var(--surface);
         }
-        .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-        .status-active .status-dot { background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 2s infinite; }
-        .status-active { background: rgba(34,197,94,0.1); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
-        .status-waiting .status-dot { background: var(--text-dim); }
-        .status-waiting { background: var(--surface-2); color: var(--text-dim); border: 1px solid var(--border); }
-        .status-ended .status-dot { background: var(--red); }
-        .status-ended { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
-
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .status-dot { width: 8px; height: 8px; display: inline-block; border: 1px solid var(--border); }
+        .status-active .status-dot { background: var(--text); }
+        .status-waiting .status-dot { background: transparent; }
+        .status-ended .status-dot { background: var(--border-light); }
 
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(20px); z-index: 1000;
-            display: flex; justify-content: center; align-items: center;
+            background: rgba(245, 245, 240, 0.95); backdrop-filter: blur(4px); z-index: 1000;
+            display: flex; justify-content: center; align-items: center; padding: 16px;
         }
         #login-box {
-            background: var(--surface); padding: 40px; border-radius: 20px; text-align: center;
-            width: 340px; border: 1px solid var(--border);
-            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            background: var(--surface); padding: 60px 40px; text-align: left;
+            width: 100%; max-width: 400px; border: 1px solid var(--border);
+            box-shadow: 12px 12px 0px rgba(0,0,0,0.05);
         }
-        #login-box h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
-        #login-box .login-sub { font-size: 13px; color: var(--text-dim); margin-bottom: 24px; }
+        #login-box h3 { font-size: 32px; font-weight: 500; margin-bottom: 8px; font-family: var(--font-serif); letter-spacing: -0.5px;}
+        #login-box .login-sub { font-size: 10px; font-weight: 600; color: var(--text-dim); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 2px;}
         #login-pass {
-            width: 100%; padding: 14px; font-size: 15px; border-radius: 10px; border: 1px solid var(--border);
-            background: var(--surface-2); color: white; outline: none; text-align: center;
-            margin-bottom: 12px; box-sizing: border-box; transition: border-color 0.2s;
+            width: 100%; padding: 16px 0; font-size: 16px; border-bottom: 2px solid var(--border); border-top: none; border-left: none; border-right: none;
+            background: transparent; color: var(--text); outline: none; text-align: left; font-family: var(--font-sans);
+            margin-bottom: 24px; box-sizing: border-box; transition: border-color 0.2s;
         }
-        #login-pass:focus { border-color: var(--accent); }
-        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-dim); }
-        .empty-state .icon { font-size: 36px; margin-bottom: 12px; opacity: 0.5; }
-        .empty-state .msg { font-size: 14px; }
+        .empty-state { text-align: left; padding: 40px 24px; color: var(--text-dim); border: 1px solid var(--border-light); background: var(--surface); }
+        .empty-state .msg { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;}
     </style>
 </head>
 <body>
     <div id="login-overlay">
         <div id="login-box">
-            <h3>管理員控製臺</h3>
-            <div class="login-sub">請輸入密碼以進入</div>
-            <input type="password" id="login-pass" placeholder="Password">
-            <button class="btn-next" onclick="attemptLogin()">登入</button>
-            <div id="login-err" style="color:var(--red); display:none; margin-top:12px; font-size:13px;">密碼錯誤</div>
+            <h3>控制台 (Console)</h3>
+            <div class="login-sub">Admin Authentication</div>
+            <input type="password" id="login-pass" placeholder="Enter Password">
+            <button class="btn-next" onclick="attemptLogin()">登入 (LOGIN)</button>
+            <div id="login-err" style="color:var(--red); display:none; margin-top:16px; font-size:11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Access Denied</div>
         </div>
     </div>
 
@@ -160,17 +145,17 @@
         <div class="sidebar-header">
             <h2 id="round-title">準備階段</h2>
         </div>
-        <div class="section-label">操作</div>
+        <div class="section-label">操作 (Operations)</div>
         <button class="btn-next" onclick="socket.emit('next_round_action')" id="btn-next">
-            <span>&#9654;</span> 開始 Round 1
+            NEXT ROUND ➔
         </button>
         <button class="btn-stop" onclick="if(confirm('確定要結束遊戲嗎？')) socket.emit('end_game_action')" id="btn-stop">
-            <span>&#9632;</span> 結束遊戲
+            END GAME ◼
         </button>
-        <div class="section-label">市場監控</div>
+        <div class="section-label" style="margin-top: 32px;">市場監控 (Market)</div>
         <div id="market-list"></div>
-        <button class="btn-reset" onclick="if(confirm('警告：這將刪除所有數據並重啟。確定?')) socket.emit('reset_game')">
-            重置系統
+        <button class="btn-reset" onclick="if(confirm('警告：這將刪除所有數據並重啟。確定?')) socket.emit('reset_game')" style="margin-top: 40px;">
+            重置系統 (RESET)
         </button>
     </div>
 
@@ -200,17 +185,17 @@
         socket.on('host_update', (data) => {
             document.getElementById('round-title').innerText = data.round === 0 ? "準備階段" : `Round ${data.round}`;
             const btnNext = document.getElementById('btn-next');
-            btnNext.innerHTML = `<span>&#9654;</span> 進入 Round ${data.round+1}`;
+            btnNext.innerHTML = `START ROUND ${data.round+1} ➔`;
 
             let statusTag = document.getElementById('status-tag');
             if(data.status === 'ended') {
                 statusTag.className = 'status-tag status-ended';
-                statusTag.innerHTML = '<span class="status-dot"></span> 已結束';
+                statusTag.innerHTML = '<span class="status-dot"></span> 已結束 (ENDED)';
                 btnNext.style.display = 'none';
                 document.getElementById('btn-stop').style.display = 'none';
             } else {
                 statusTag.className = 'status-tag status-active';
-                statusTag.innerHTML = '<span class="status-dot"></span> 進行中';
+                statusTag.innerHTML = '<span class="status-dot"></span> 進行中 (ACTIVE)';
                 btnNext.style.display = 'flex';
                 document.getElementById('btn-stop').style.display = 'flex';
             }
@@ -231,18 +216,15 @@
             const list = document.getElementById('market-list');
             list.innerHTML = Object.keys(market).map(code => {
                 const item = market[code];
-                let tagClass = 'tag-stock';
-                if(item.type === 'gold') tagClass = 'tag-gold';
-                if(item.type === 'bond') tagClass = 'tag-bond';
                 let tagLabel = item.type === 'gold' ? 'GOLD' : (item.type === 'bond' ? 'BOND' : 'STOCK');
                 let change = item.change || 0; let pct = item.changePercent || 0;
                 let changeColor = change > 0 ? "up" : (change < 0 ? "down" : "");
-                let arrow = change > 0 ? "&#9650;" : (change < 0 ? "&#9660;" : "");
+                let arrow = change > 0 ? "↗" : (change < 0 ? "↘" : "");
                 let displayChange = change !== 0 ? `<span class="${changeColor}" style="font-size:11px; font-weight:600;">${arrow} ${Math.abs(pct).toFixed(1)}%</span>` : `<span style="font-size:11px; color:var(--text-dim);">—</span>`;
                 return `<div class="stat-box">
                     <div style="min-width:0; flex:1;">
-                        <span class="tag ${tagClass}">${tagLabel}</span>
-                        <div class="market-name">${item.name}</div>
+                        <span class="tag">${tagLabel}</span>
+                        <div class="market-name">${item.name} <span class="market-code">(${code})</span></div>
                     </div>
                     <div style="text-align:right; flex-shrink:0;">
                         <div class="market-price">$${item.price.toFixed(2)}</div>
@@ -261,22 +243,22 @@
             }).sort((a, b) => b.total - a.total);
 
             if (ranking.length === 0) {
-                list.innerHTML = '<div class="empty-state"><div class="icon">&#128202;</div><div class="msg">等待玩家加入...</div></div>';
+                list.innerHTML = '<div class="empty-state"><div class="msg">等待玩家加入 (WAITING FOR PLAYERS...)</div></div>';
                 return;
             }
 
             list.innerHTML = ranking.map((p, i) => {
-                let rankClass = i < 3 ? `rank-${i+1}` : 'rank-default';
+                let rankClass = i === 0 ? `rank-1` : 'rank-default';
                 let depTotal = p.deposits ? p.deposits.reduce((sum,d)=>sum+d.amount,0) : 0;
                 return `<div class="player-row ${rankClass}">
                     <div class="player-info">
-                        <div class="rank-badge">${i+1}</div>
+                        <div class="rank-badge">${i+1 < 10 ? '0'+(i+1) : i+1}</div>
                         <div style="min-width:0;">
                             <div class="player-name">${p.name}</div>
                             <div class="player-detail">
-                                <span>現金 $${Math.floor(p.cash).toLocaleString()}</span>
-                                <span>定存 $${Math.floor(depTotal).toLocaleString()}</span>
-                                <span>證券 $${Math.floor(p.stockVal).toLocaleString()}</span>
+                                <span>CASH $${Math.floor(p.cash).toLocaleString()}</span>
+                                <span>DEP $${Math.floor(depTotal).toLocaleString()}</span>
+                                <span>SEC $${Math.floor(p.stockVal).toLocaleString()}</span>
                             </div>
                         </div>
                     </div>

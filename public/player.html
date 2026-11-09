@@ -3,215 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>投資操作</title>
+    <title>投資操作 | Editorial</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+        
         :root {
-            --bg: #0b0e11;
-            --surface: #141820;
-            --surface-2: #1a1f2e;
-            --border: rgba(255,255,255,0.06);
-            --text: #eaf0f6;
-            --text-dim: #6b7a8d;
-            --accent: #3b82f6;
-            --accent-glow: rgba(59,130,246,0.15);
-            --green: #22c55e;
-            --green-dim: rgba(34,197,94,0.12);
-            --red: #ef4444;
-            --red-dim: rgba(239,68,68,0.12);
-            --amber: #f59e0b;
-            --input-bg: #1a1f2e;
+            --bg: #F5F5F0;
+            --surface: #FFFFFF;
+            --surface-2: #FAFAFA;
+            --border: #111111;
+            --border-light: #E6E3DF;
+            --text: #111111;
+            --text-dim: #686868;
+            --green: #1B5E20;
+            --red: #B71C1C;
+            --amber: #B9770E;
+            --font-sans: 'Inter', -apple-system, sans-serif;
+            --font-serif: 'Playfair Display', serif;
         }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            margin: 0; padding: 16px; padding-top: max(16px, env(safe-area-inset-top));
+            font-family: var(--font-sans);
+            margin: 0; padding: 24px 16px; 
+            padding-top: max(24px, env(safe-area-inset-top));
             padding-bottom: max(80px, env(safe-area-inset-bottom));
             background: var(--bg); color: var(--text);
             -webkit-font-smoothing: antialiased;
         }
         ::-webkit-scrollbar { width: 0; }
 
+        h1, h2, h3, .info-val, #final-assets {
+            font-family: var(--font-serif);
+            font-weight: 500;
+            letter-spacing: -0.5px;
+        }
+
         .card {
-            background: var(--surface); padding: 18px; margin-bottom: 14px; border-radius: 16px;
+            background: var(--surface); 
+            padding: 24px; 
+            margin-bottom: 24px; 
             border: 1px solid var(--border);
+            border-radius: 0;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
         }
 
         select, input[type="text"], input[type="number"] {
-            width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px;
-            background: var(--input-bg); font-size: 16px; margin-bottom: 8px; box-sizing: border-box;
-            outline: none; -webkit-appearance: none; color: var(--text); font-family: inherit;
-            transition: border-color 0.2s;
+            width: 100%; padding: 14px 16px; border: 1px solid var(--border); border-radius: 0;
+            background: var(--surface); font-size: 15px; margin-bottom: 12px; box-sizing: border-box;
+            outline: none; -webkit-appearance: none; color: var(--text); font-family: var(--font-sans);
+            transition: box-shadow 0.2s;
         }
-        select:focus, input:focus { border-color: var(--accent); }
+        select:focus, input:focus { box-shadow: 2px 2px 0px rgba(0,0,0,1); }
 
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .info-box {
-            background: var(--surface-2); padding: 14px; border-radius: 12px; text-align: center;
-            border: 1px solid var(--border);
+            background: var(--surface); padding: 16px; text-align: left;
+            border: 1px solid var(--border); border-radius: 0;
         }
-        .info-label { font-size: 12px; color: var(--text-dim); margin-bottom: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-        .info-val { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
-        .info-val-accent { color: var(--accent); }
+        .info-label { font-size: 10px; color: var(--text-dim); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; }
+        .info-val { font-size: 32px; color: var(--text); }
+        .info-val-accent { color: var(--text); }
 
         button {
-            flex: 1; padding: 12px; border: none; font-weight: 600; color: white; border-radius: 12px;
-            font-size: 14px; cursor: pointer; transition: all 0.2s; font-family: inherit;
+            flex: 1; padding: 14px; border: 1px solid var(--border); font-weight: 600; 
+            border-radius: 0; font-size: 11px; cursor: pointer; transition: all 0.2s; 
+            font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 1.5px;
         }
-        button:active { opacity: 0.7; transform: scale(0.98); }
-        .btn-buy { background: linear-gradient(135deg, #22c55e, #16a34a); }
-        .btn-sell { background: linear-gradient(135deg, #ef4444, #dc2626); }
-        .btn-action { background: linear-gradient(135deg, #3b82f6, #2563eb); width: 100%; }
-        .btn-disabled { background: var(--surface-2); color: var(--text-dim); pointer-events: none; border: 1px solid var(--border); }
+        button:active { transform: translate(2px, 2px); }
+        .btn-buy { background: var(--text); color: var(--surface); }
+        .btn-sell { background: transparent; color: var(--text); }
+        .btn-action { background: var(--text); color: var(--surface); width: 100%; }
+        .btn-disabled { background: var(--border-light); color: var(--text-dim); border-color: var(--border-light); pointer-events: none; }
 
         .tag {
-            font-size: 10px; padding: 3px 8px; border-radius: 6px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; vertical-align: middle; margin-left: 6px;
+            font-size: 9px; padding: 4px 8px; border-radius: 0; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px; display: inline-block; 
+            vertical-align: middle; margin-left: 8px; border: 1px solid var(--border);
+            background: transparent; color: var(--text);
         }
-        .tag-stock { background: rgba(99,102,241,0.15); color: #818cf8; }
-        .tag-gold { background: rgba(251,191,36,0.15); color: #fbbf24; }
-        .tag-bond { background: rgba(34,197,94,0.15); color: #4ade80; }
 
         .text-up { color: var(--green); } .text-down { color: var(--red); }
-        .price-change { font-size: 12px; font-weight: 600; }
+        .price-change { font-size: 12px; font-weight: 500; font-family: var(--font-sans); margin-top: 4px; display: block;}
 
         .deposit-item {
-            border-bottom: 1px solid var(--border); padding: 12px 0; font-size: 14px;
-            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border-light); padding: 16px 0; font-size: 14px;
+            display: flex; justify-content: space-between; align-items: flex-start;
         }
         .deposit-item:last-child { border-bottom: none; }
 
         .section-title {
-            font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
-            color: var(--text-dim); margin: 20px 0 10px 4px;
+            font-family: var(--font-serif);
+            font-size: 26px; font-weight: 400; letter-spacing: -0.5px;
+            color: var(--text); margin: 40px 0 16px 0;
+            border-bottom: 2px solid var(--border); padding-bottom: 12px;
         }
 
         .holding-bar {
-            background: var(--surface-2); padding: 8px 12px; border-radius: 8px; font-size: 13px;
-            margin: 12px 0; color: var(--text-dim); border: 1px solid var(--border);
+            background: var(--surface-2); padding: 12px 16px; font-size: 11px;
+            margin: 16px 0; color: var(--text-dim); border: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center;
+            text-transform: uppercase; letter-spacing: 1px;
         }
-        .holding-bar strong { color: var(--text); }
+        .holding-bar strong { color: var(--text); font-family: var(--font-serif); font-size: 16px; letter-spacing: 0; text-transform: none;}
 
-        .trade-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
-        .trade-col select { margin: 0; font-size: 14px; }
+        .trade-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+        .trade-col select { margin: 0; font-size: 13px; padding: 12px; }
 
         .bond-info {
-            font-size: 11px; color: var(--green); background: var(--green-dim);
-            padding: 3px 8px; border-radius: 6px; display: inline-block; margin-top: 4px; font-weight: 600;
+            font-size: 10px; color: var(--text-dim); border: 1px solid var(--border-light);
+            padding: 2px 6px; display: inline-block; margin-top: 6px; font-weight: 500;
         }
 
         #news-modal, #end-screen {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(16px); z-index: 200;
-            display: none; align-items: center; justify-content: center;
+            background: rgba(245, 245, 240, 0.95); backdrop-filter: blur(4px); z-index: 200;
+            display: none; align-items: center; justify-content: center; padding: 16px;
         }
         .modal-card {
-            background: var(--surface); width: 88%; max-width: 400px; padding: 28px;
-            border-radius: 20px; text-align: center; border: 1px solid var(--border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            background: var(--surface); width: 100%; max-width: 440px; padding: 40px;
+            border-radius: 0; text-align: left; border: 1px solid var(--border);
+            box-shadow: 12px 12px 0px rgba(0,0,0,0.1);
         }
-        .modal-card h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
-        .modal-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-        .modal-card p { font-size: 15px; color: var(--text-dim); line-height: 1.5; }
+        .modal-card h1 { font-size: 40px; margin-bottom: 12px; }
+        .modal-card h2 { font-size: 28px; margin-bottom: 12px; }
+        .modal-card p { font-size: 14px; color: var(--text-dim); line-height: 1.6; font-family: var(--font-sans); }
+        .modal-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; color: var(--text-dim); margin-bottom: 16px; text-transform: uppercase;}
 
         #toast {
-            position: fixed; bottom: max(30px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
-            background: var(--surface); color: var(--text); padding: 12px 24px; border-radius: 50px;
-            display: none; z-index: 100; font-size: 14px; font-weight: 600;
-            border: 1px solid var(--border); box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            position: fixed; bottom: max(40px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
+            background: var(--text); color: var(--surface); padding: 16px 32px; border-radius: 0;
+            display: none; z-index: 100; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;
+            border: 1px solid var(--border); box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
         }
 
-        #login-screen .card {
-            background: var(--surface); border: 1px solid var(--border);
-        }
-        #login-screen h2 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
-        #login-screen .login-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; }
-        #login-screen input { text-align: center; font-size: 17px; }
+        #login-screen .card { padding: 60px 40px; box-shadow: 8px 8px 0px rgba(0,0,0,0.05); text-align: left; }
+        #login-screen h2 { font-size: 46px; font-weight: 500; letter-spacing: -1px; margin-bottom: 8px; }
+        #login-screen .login-sub { font-size: 11px; color: var(--text-dim); margin-bottom: 40px; text-transform: uppercase; letter-spacing: 2px;}
+        #login-screen input { text-align: left; font-size: 16px; border-bottom: 2px solid var(--border); border-top: none; border-left: none; border-right: none; padding-left: 0; background: transparent;}
 
-        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .header-row h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
-        .player-meta { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
-        .player-meta a { color: var(--accent); cursor: pointer; text-decoration: none; }
+        .header-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; border-bottom: 2px solid var(--border); padding-bottom: 20px;}
+        .header-row h1 { font-size: 42px; font-weight: 500; letter-spacing: -1px; }
+        .player-meta { font-size: 10px; color: var(--text-dim); margin-top: 8px; text-transform: uppercase; letter-spacing: 1px;}
+        .player-meta a { color: var(--text); cursor: pointer; text-decoration: underline; font-weight: 600;}
+        
         .round-pill {
-            background: var(--accent-glow); color: var(--accent); font-size: 12px; font-weight: 600;
-            padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(59,130,246,0.2);
-            white-space: nowrap;
+            background: transparent; color: var(--text); font-size: 10px; font-weight: 600;
+            padding: 6px 12px; border: 1px solid var(--border);
+            white-space: nowrap; text-transform: uppercase; letter-spacing: 1px;
         }
 
-        .deposit-form {
-            background: var(--surface-2); padding: 14px; border-radius: 12px; margin-bottom: 14px;
-            border: 1px solid var(--border);
-        }
-        .deposit-form .row { display: flex; gap: 8px; }
-        .deposit-form input, .deposit-form select { margin: 0; background: var(--bg); border: 1px solid var(--border); font-size: 15px; }
+        .deposit-form { background: transparent; padding: 0; margin-bottom: 12px; border: none; }
+        .deposit-form .row { display: flex; gap: 12px; }
+        
+        .market-price-disp { font-size: 26px; font-weight: 500; font-family: var(--font-serif); letter-spacing: -0.5px; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .card { animation: fadeIn 0.3s ease; }
+        .card { animation: fadeIn 0.4s ease-out; }
     </style>
 </head>
 <body>
     <div id="news-modal">
         <div class="modal-card">
-            <div style="font-size: 40px; margin-bottom: 12px;">📢</div>
+            <div class="modal-label">BREAKING NEWS</div>
             <h2 id="modal-title">快訊</h2>
-            <p id="modal-desc">...</p>
-            <button class="btn-action" onclick="document.getElementById('news-modal').style.display='none'" style="margin-top:16px;">我知道了</button>
+            <p id="modal-desc" style="margin-bottom: 32px;">...</p>
+            <button class="btn-action" onclick="document.getElementById('news-modal').style.display='none'">我知道了</button>
         </div>
     </div>
     <div id="end-screen">
         <div class="modal-card">
-            <div style="font-size: 48px; margin-bottom: 8px;">&#127942;</div>
+            <div class="modal-label">SESSION ENDED</div>
             <h1>遊戲結束</h1>
-            <p style="margin-bottom: 16px;">最終結算</p>
-            <div id="final-assets" style="font-size: 40px; font-weight: 800; color: var(--accent); margin-bottom: 20px; letter-spacing: -1px;">$0</div>
-            <div id="final-breakdown" style="text-align: left; background: var(--surface-2); padding: 16px; border-radius: 12px; font-size: 14px; border: 1px solid var(--border);"></div>
+            <p style="margin-bottom: 24px;">最終資產結算</p>
+            <div id="final-assets" style="font-size: 48px; color: var(--text); margin-bottom: 32px; border-bottom: 2px solid var(--border); padding-bottom: 16px;">$0</div>
+            <div id="final-breakdown" style="text-align: left; background: var(--surface-2); padding: 20px; font-size: 14px; border: 1px solid var(--border);"></div>
         </div>
     </div>
 
-    <div id="login-screen" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 20px;">
-        <div class="card" style="text-align: center; padding: 44px 24px;">
-            <div style="font-size: 44px; margin-bottom: 12px;">&#128200;</div>
+    <div id="login-screen" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 16px;">
+        <div class="card" style="max-width: 400px; margin: 0 auto; width: 100%;">
+            <div class="modal-label">01 / SIMULATOR</div>
             <h2>股市大亨</h2>
-            <div class="login-sub">模擬投資，贏取利潤</div>
+            <div class="login-sub">Market Simulator &middot; Editorial Ed.</div>
             <input type="text" id="username" placeholder="輸入姓名 / 組別">
-            <button class="btn-action" style="margin-top: 8px;" onclick="attemptJoin()">進入市場</button>
+            <button class="btn-action" style="margin-top: 16px;" onclick="attemptJoin()">進入市場</button>
         </div>
     </div>
 
-    <div id="game-screen" style="display:none;">
+    <div id="game-screen" style="display:none; max-width: 800px; margin: 0 auto;">
         <div class="header-row">
             <div>
                 <h1>我的資產</h1>
                 <div class="player-meta">
-                    <span id="player-name-display"></span> &middot; <a onclick="logout()">登出</a>
+                    CLIENT: <span id="player-name-display" style="font-weight: 600; color: var(--text);"></span> &nbsp;&nbsp;&middot;&nbsp;&nbsp; <a onclick="logout()">登出 (LOGOUT)</a>
                 </div>
             </div>
             <span id="round-display" class="round-pill">載入中...</span>
         </div>
 
-        <div class="card" style="padding: 14px 18px;">
+        <div class="card" style="padding: 24px;">
             <div class="info-grid">
                 <div class="info-box">
-                    <div class="info-label">現金</div>
+                    <div class="info-label">現金 (CASH)</div>
                     <div class="info-val" id="p-cash">$0</div>
                 </div>
                 <div class="info-box">
-                    <div class="info-label">總資產</div>
+                    <div class="info-label">總資產 (TOTAL)</div>
                     <div class="info-val info-val-accent" id="p-total">$0</div>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom: 4px;">
-                <span style="font-size:18px;">&#127974;</span>
-                <h3 style="font-size: 17px; font-weight: 700;">定期存款</h3>
+            <div style="display:flex; align-items:baseline; justify-content:space-between; border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 24px;">
+                <h3 style="font-size: 22px;">定期存款</h3>
+                <span style="font-size: 10px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; color: var(--text-dim);">Fixed Deposit</span>
             </div>
-            <div style="font-size:12px; color:var(--text-dim); margin-bottom:14px;">資金鎖定，到期自動入帳</div>
             <div class="deposit-form">
                 <div class="row">
-                    <input type="number" id="deposit-amount" placeholder="金額" style="flex:1;">
+                    <input type="number" id="deposit-amount" placeholder="金額 (Amount)" style="flex:1;">
                     <select id="deposit-duration" style="flex:1.2;">
                         <option value="3">3個月 (0.125%)</option>
                         <option value="6">6個月 (0.125%)</option>
@@ -221,10 +233,10 @@
                 </div>
                 <button class="btn-buy" style="width:100%; margin-top: 8px;" onclick="createDeposit()">立即存入</button>
             </div>
-            <div id="deposit-list"></div>
+            <div id="deposit-list" style="margin-top: 24px;"></div>
         </div>
 
-        <div class="section-title">市場報價</div>
+        <div class="section-title">市場報價 <span style="font-size: 12px; font-family: var(--font-sans); color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-left: 12px;">Market Overview</span></div>
         <div id="market-list"></div>
     </div>
     <div id="toast"></div>
@@ -308,9 +320,9 @@
             let total = me.cash + depositTotal + stockVal;
             document.getElementById('final-assets').innerText = '$' + Math.floor(total).toLocaleString();
             document.getElementById('final-breakdown').innerHTML =
-                `<div style="display:flex; justify-content:space-between; margin-bottom:8px; color:var(--text);"><span style="color:var(--text-dim);">現金</span> <span style="font-weight:600;">$${Math.floor(me.cash).toLocaleString()}</span></div>` +
-                `<div style="display:flex; justify-content:space-between; margin-bottom:8px; color:var(--text);"><span style="color:var(--text-dim);">定存</span> <span style="font-weight:600;">$${Math.floor(depositTotal).toLocaleString()}</span></div>` +
-                `<div style="display:flex; justify-content:space-between; color:var(--text);"><span style="color:var(--text-dim);">證券</span> <span style="font-weight:600;">$${Math.floor(stockVal).toLocaleString()}</span></div>`;
+                `<div style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text); border-bottom: 1px solid var(--border-light); padding-bottom: 8px;"><span style="color:var(--text-dim); text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">現金 (Cash)</span> <span style="font-weight:600; font-family: var(--font-serif); font-size: 16px;">$${Math.floor(me.cash).toLocaleString()}</span></div>` +
+                `<div style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text); border-bottom: 1px solid var(--border-light); padding-bottom: 8px;"><span style="color:var(--text-dim); text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">定存 (Deposit)</span> <span style="font-weight:600; font-family: var(--font-serif); font-size: 16px;">$${Math.floor(depositTotal).toLocaleString()}</span></div>` +
+                `<div style="display:flex; justify-content:space-between; color:var(--text);"><span style="color:var(--text-dim); text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">證券 (Securities)</span> <span style="font-weight:600; font-family: var(--font-serif); font-size: 16px;">$${Math.floor(stockVal).toLocaleString()}</span></div>`;
             document.getElementById('end-screen').style.display = 'flex';
         });
 
@@ -339,20 +351,21 @@
         function renderDeposits(deposits) {
             const list = document.getElementById('deposit-list');
             if(!deposits || deposits.length === 0) {
-                list.innerHTML = '<div style="text-align:center; color:var(--text-dim); font-size:13px; padding:12px;">目前沒有定存</div>';
+                list.innerHTML = '<div style="text-align:left; color:var(--text-dim); font-size:12px; padding:16px; border: 1px solid var(--border-light); text-transform: uppercase; letter-spacing: 1px;">目前沒有定存 (No Active Deposits)</div>';
                 return;
             }
             list.innerHTML = deposits.map(d => {
                 let roundsLeft = d.maturityRound - currentRound;
-                let statusColor = roundsLeft <= 0 ? 'var(--green)' : 'var(--amber)';
-                let statusBg = roundsLeft <= 0 ? 'var(--green-dim)' : 'rgba(245,158,11,0.1)';
+                let statusColor = roundsLeft <= 0 ? 'var(--text)' : 'var(--text-dim)';
+                let statusBg = roundsLeft <= 0 ? 'var(--border-light)' : 'transparent';
+                let statusBorder = roundsLeft <= 0 ? 'var(--border)' : 'var(--border-light)';
                 return `<div class="deposit-item">
                     <div>
-                        <div style="font-weight:700; color:var(--text);">$${d.amount.toLocaleString()}</div>
-                        <div style="font-size:12px; color:var(--text-dim);">${d.duration}個月期</div>
+                        <div style="font-weight:500; font-family: var(--font-serif); font-size: 20px; color:var(--text);">$${d.amount.toLocaleString()}</div>
+                        <div style="font-size:11px; color:var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">${d.duration}個月期 (Months)</div>
                     </div>
-                    <div style="font-size:12px; font-weight:600; color:${statusColor}; background:${statusBg}; padding:4px 10px; border-radius:6px;">
-                        ${roundsLeft <= 0 ? "結算中..." : `&#128274; 剩 ${roundsLeft} 回合`}
+                    <div style="font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:${statusColor}; background:${statusBg}; padding:6px 12px; border:1px solid ${statusBorder};">
+                        ${roundsLeft <= 0 ? "結算中 (Processing)" : `剩 ${roundsLeft} 回合 (Rounds Left)`}
                     </div>
                 </div>`;
             }).join('');
@@ -377,34 +390,33 @@
                 if (lotsHeld > 0) { let limit = Math.min(lotsHeld, 100); for(let i=1; i<=limit; i++) sellOptions += `<option value="${i}">${i} ${unitName}</option>`; }
                 let change = item.change || 0; let pct = item.changePercent || 0;
                 let colorClass = change >= 0 ? "text-up" : "text-down";
-                let arrow = change > 0 ? "&#9650; " : (change < 0 ? "&#9660; " : "");
-                let changeDisplay = change !== 0 ? `<span class="price-change ${colorClass}">${arrow}${Math.abs(change).toFixed(2)} (${change>=0?"+":""}${pct.toFixed(1)}%)</span>` : `<span class="price-change" style="color:var(--text-dim);">—</span>`;
-                let tagType = item.type === 'gold' ? 'gold' : (item.type === 'bond' ? 'bond' : 'stock');
-                let tagName = item.type === 'gold' ? '黃金' : (item.type === 'bond' ? '債券' : '股票');
+                let arrow = change > 0 ? "↗" : (change < 0 ? "↘" : "");
+                let changeDisplay = change !== 0 ? `<span class="price-change ${colorClass}">${arrow} ${Math.abs(change).toFixed(2)} (${change>=0?"+":""}${pct.toFixed(1)}%)</span>` : `<span class="price-change" style="color:var(--text-dim);">—</span>`;
+                let tagName = item.type === 'gold' ? 'GOLD' : (item.type === 'bond' ? 'BOND' : 'STOCK');
                 let extraInfo = item.type === 'bond' ? `<br><span class="bond-info">年息 ${item.coupon}%</span>` : '';
                 return `<div class="card">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                         <div>
-                            <div style="font-weight:700; font-size:16px;">${item.name}<span class="tag tag-${tagType}">${tagName}</span></div>
-                            <div style="color:var(--text-dim); font-size:13px; margin-top:2px;">${code}${extraInfo}</div>
+                            <div style="font-weight:500; font-family: var(--font-serif); font-size:22px; letter-spacing: -0.5px;">${item.name}<span class="tag">${tagName}</span></div>
+                            <div style="color:var(--text-dim); font-size:11px; margin-top:6px; font-weight: 500; letter-spacing: 0.5px;">${code}${extraInfo}</div>
                         </div>
                         <div style="text-align:right;">
-                            <div style="font-size:18px; font-weight:800; letter-spacing:-0.3px;">$${item.price.toFixed(2)}</div>
+                            <div class="market-price-disp">$${item.price.toFixed(2)}</div>
                             ${changeDisplay}
                         </div>
                     </div>
                     <div class="holding-bar">
-                        <span>持有</span>
-                        <span><strong>${holdingQty} ${shareUnit}</strong> (${lotsHeld} ${unitName})</span>
+                        <span>持有 (Holding)</span>
+                        <span><strong>${holdingQty}</strong> ${shareUnit} / ${lotsHeld} ${unitName}</span>
                     </div>
                     <div class="trade-grid">
                         <div class="trade-col">
                             <select id="buy-select-${code}">${buyOptions}</select>
-                            <button class="${maxBuy > 0 ? 'btn-buy' : 'btn-disabled'}" style="width:100%; margin-top:4px;" onclick="trade('buy', '${code}')">買入</button>
+                            <button class="${maxBuy > 0 ? 'btn-buy' : 'btn-disabled'}" style="width:100%; margin-top:4px;" onclick="trade('buy', '${code}')">買入 (BUY)</button>
                         </div>
                         <div class="trade-col">
                             <select id="sell-select-${code}">${sellOptions}</select>
-                            <button class="${lotsHeld > 0 ? 'btn-sell' : 'btn-disabled'}" style="width:100%; margin-top:4px;" onclick="trade('sell', '${code}')">賣出</button>
+                            <button class="${lotsHeld > 0 ? 'btn-sell' : 'btn-disabled'}" style="width:100%; margin-top:4px;" onclick="trade('sell', '${code}')">賣出 (SELL)</button>
                         </div>
                     </div>
                 </div>`;
