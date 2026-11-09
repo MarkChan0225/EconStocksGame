@@ -1,75 +1,39 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>控制台</title>
+    <title>Console</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
         
         :root {
-            --bg: #F5F5F0;
-            --surface: #FFFFFF;
-            --surface-2: #FAFAFA;
-            --border: #111111;
-            --border-light: #E6E3DF;
-            --text: #111111;
-            --text-dim: #686868;
-            --green: #1B5E20;
-            --red: #B71C1C;
-            --font-sans: 'Inter', -apple-system, sans-serif;
-            --font-serif: 'Playfair Display', serif;
+            --bg: #F5F5F0; --surface: #FFFFFF; --surface-2: #FAFAFA; --border: #111111; --border-light: #E6E3DF;
+            --text: #111111; --text-dim: #686868; --green: #1B5E20; --red: #B71C1C;
+            --font-sans: 'Inter', -apple-system, sans-serif; --font-serif: 'Playfair Display', serif;
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: var(--font-sans); background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; letter-spacing: -0.2px;}
         ::-webkit-scrollbar { width: 0; }
 
-        .sidebar {
-            width: 340px; padding: 32px 24px; background: var(--surface);
-            border-right: 1px solid var(--border); overflow-y: auto;
-            display: flex; flex-direction: column; gap: 16px;
-        }
+        .sidebar { width: 340px; padding: 32px 24px; background: var(--surface); border-right: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
         .sidebar-header { margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 16px;}
         .sidebar-header h2 { font-size: 28px; font-weight: 500; font-family: var(--font-serif); letter-spacing: -0.5px; }
-        
-        .section-label {
-            font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
-            color: var(--text-dim); margin: 24px 0 8px;
-        }
+        .section-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); margin: 24px 0 8px; }
 
         .main { flex: 1; padding: 48px; overflow-y: auto; background: var(--bg); }
 
-        .stat-box {
-            background: var(--surface); padding: 16px; margin-bottom: 12px;
-            display: flex; justify-content: space-between; align-items: flex-start;
-            border: 1px solid var(--border); transition: box-shadow 0.2s;
-        }
+        .stat-box { background: var(--surface); padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start; border: 1px solid var(--border); transition: box-shadow 0.2s; }
         .stat-box:hover { box-shadow: 4px 4px 0px rgba(0,0,0,0.05); }
-        
         .market-name { font-size: 14px; font-weight: 600; color: var(--text); font-family: var(--font-serif); letter-spacing: 0; margin-top: 6px;}
         .market-code { font-size: 10px; color: var(--text-dim); font-weight: 500; }
         .market-price { font-size: 18px; font-weight: 500; color: var(--text); font-family: var(--font-serif); }
-        
-        .tag {
-            font-size: 9px; padding: 4px 6px; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 1px; display: inline-block;
-            border: 1px solid var(--border); background: transparent; color: var(--text);
-        }
-
+        .tag { font-size: 9px; padding: 4px 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: inline-block; border: 1px solid var(--border); background: transparent; color: var(--text); }
         .up { color: var(--green); } .down { color: var(--red); }
 
-        .player-row {
-            background: var(--surface); margin-bottom: 16px; padding: 24px;
-            display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid var(--border); transition: all 0.2s ease;
-        }
+        .player-row { background: var(--surface); margin-bottom: 16px; padding: 24px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); transition: all 0.2s ease; }
         .player-row:hover { box-shadow: 6px 6px 0px rgba(0,0,0,0.05); transform: translate(-2px, -2px); }
-        
-        .rank-badge {
-            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; 
-            font-weight: 500; font-size: 20px; font-family: var(--font-serif); margin-right: 20px; flex-shrink: 0;
-            border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
-        }
+        .rank-badge { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: 500; font-size: 20px; font-family: var(--font-serif); margin-right: 20px; flex-shrink: 0; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); }
         .rank-1 .rank-badge { background: var(--text); color: var(--surface); }
 
         .player-info { display: flex; align-items: center; flex: 1; min-width: 0; }
@@ -77,98 +41,77 @@
         .player-detail { font-size: 11px; color: var(--text-dim); margin-top: 6px; display: flex; gap: 16px; text-transform: uppercase; letter-spacing: 1px;}
         .player-total { font-size: 28px; font-weight: 500; color: var(--text); letter-spacing: -0.5px; font-family: var(--font-serif); white-space: nowrap; margin-left: 24px; }
 
-        button {
-            width: 100%; padding: 16px; color: var(--surface); border: 1px solid var(--border); border-radius: 0;
-            cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 1.5px;
-        }
+        button { width: 100%; padding: 16px; color: var(--surface); border: 1px solid var(--border); border-radius: 0; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 1.5px; }
         button:hover { transform: translate(2px, 2px); }
         .btn-next { background: var(--text); margin-bottom: 8px; }
         .btn-stop { background: var(--surface); color: var(--text); margin-bottom: 8px; border-style: dashed; }
         .btn-reset { background: transparent; border: 1px solid var(--border); color: var(--red); margin-top: auto; }
         .btn-reset:hover { background: rgba(183,28,28,0.05); }
 
-        .news-banner {
-            background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 24px;
-            margin-bottom: 40px; display: none; box-shadow: 8px 8px 0px rgba(0,0,0,0.05);
-        }
+        .news-banner { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 24px; margin-bottom: 40px; display: none; box-shadow: 8px 8px 0px rgba(0,0,0,0.05); }
         .news-banner .news-tag { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--text); margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
         .news-banner .news-title { font-weight: 500; font-size: 24px; margin-bottom: 8px; font-family: var(--font-serif); }
         .news-banner .news-desc { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
 
         .leaderboard-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; border-bottom: 2px solid var(--border); padding-bottom: 16px; }
         .leaderboard-header h2 { font-size: 32px; font-weight: 500; font-family: var(--font-serif); letter-spacing: -1px; }
-        .status-tag {
-            font-size: 10px; font-weight: 600; padding: 6px 12px; border-radius: 0;
-            display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px;
-            border: 1px solid var(--border); background: var(--surface);
-        }
+        .status-tag { font-size: 10px; font-weight: 600; padding: 6px 12px; border-radius: 0; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; border: 1px solid var(--border); background: var(--surface); }
         .status-dot { width: 8px; height: 8px; display: inline-block; border: 1px solid var(--border); }
         .status-active .status-dot { background: var(--text); }
         .status-waiting .status-dot { background: transparent; }
         .status-ended .status-dot { background: var(--border-light); }
 
-        #login-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(245, 245, 240, 0.95); backdrop-filter: blur(4px); z-index: 1000;
-            display: flex; justify-content: center; align-items: center; padding: 16px;
-        }
-        #login-box {
-            background: var(--surface); padding: 60px 40px; text-align: left;
-            width: 100%; max-width: 400px; border: 1px solid var(--border);
-            box-shadow: 12px 12px 0px rgba(0,0,0,0.05);
-        }
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(245, 245, 240, 0.95); backdrop-filter: blur(4px); z-index: 1000; display: flex; justify-content: center; align-items: center; padding: 16px; }
+        #login-box { background: var(--surface); padding: 60px 40px; text-align: left; width: 100%; max-width: 400px; border: 1px solid var(--border); box-shadow: 12px 12px 0px rgba(0,0,0,0.05); }
         #login-box h3 { font-size: 32px; font-weight: 500; margin-bottom: 8px; font-family: var(--font-serif); letter-spacing: -0.5px;}
         #login-box .login-sub { font-size: 10px; font-weight: 600; color: var(--text-dim); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 2px;}
-        #login-pass {
-            width: 100%; padding: 16px 0; font-size: 16px; border-bottom: 2px solid var(--border); border-top: none; border-left: none; border-right: none;
-            background: transparent; color: var(--text); outline: none; text-align: left; font-family: var(--font-sans);
-            margin-bottom: 24px; box-sizing: border-box; transition: border-color 0.2s;
-        }
+        #login-pass { width: 100%; padding: 16px 0; font-size: 16px; border-bottom: 2px solid var(--border); border-top: none; border-left: none; border-right: none; background: transparent; color: var(--text); outline: none; text-align: left; font-family: var(--font-sans); margin-bottom: 24px; box-sizing: border-box; transition: border-color 0.2s; }
         .empty-state { text-align: left; padding: 40px 24px; color: var(--text-dim); border: 1px solid var(--border-light); background: var(--surface); }
         .empty-state .msg { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;}
+        .lang-btn { position: fixed; top: 24px; right: 32px; background: transparent; color: var(--text); border: 1px solid var(--border); padding: 6px 10px; font-size: 10px; font-weight: 600; cursor: pointer; z-index: 1000; font-family: var(--font-sans); text-transform: uppercase;}
     </style>
 </head>
 <body>
+    <button id="lang-toggle" class="lang-btn" onclick="toggleLang()">中文</button>
+
     <div id="login-overlay">
         <div id="login-box">
-            <h3>控制台 (Console)</h3>
-            <div class="login-sub">Admin Authentication</div>
+            <h3 id="login-title">Console</h3>
+            <div class="login-sub" id="login-sub">Admin Authentication</div>
             <input type="password" id="login-pass" placeholder="Enter Password">
-            <button class="btn-next" onclick="attemptLogin()">登入 (LOGIN)</button>
+            <button class="btn-next" id="btn-login" onclick="attemptLogin()">LOGIN</button>
             <div id="login-err" style="color:var(--red); display:none; margin-top:16px; font-size:11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Access Denied</div>
         </div>
     </div>
 
     <div class="sidebar">
         <div class="sidebar-header">
-            <h2 id="round-title">準備階段</h2>
+            <h2 id="round-title">Preparation Phase</h2>
         </div>
-        <div class="section-label">操作 (Operations)</div>
+        <div class="section-label" id="lbl-ops">Operations</div>
         <button class="btn-next" onclick="socket.emit('next_round_action')" id="btn-next">
-            NEXT ROUND ➔
+            START ROUND ➔
         </button>
-        <button class="btn-stop" onclick="if(confirm('確定要結束遊戲嗎？')) socket.emit('end_game_action')" id="btn-stop">
+        <button class="btn-stop" onclick="if(confirm(t('confirmEnd'))) socket.emit('end_game_action')" id="btn-stop">
             END GAME ◼
         </button>
-        <div class="section-label" style="margin-top: 32px;">市場監控 (Market)</div>
+        <div class="section-label" id="lbl-market" style="margin-top: 32px;">Market</div>
         <div id="market-list"></div>
-        <button class="btn-reset" onclick="if(confirm('警告：這將刪除所有數據並重啟。確定?')) socket.emit('reset_game')" style="margin-top: 40px;">
-            重置系統 (RESET)
+        <button class="btn-reset" onclick="if(confirm(t('confirmReset'))) socket.emit('reset_game')" id="btn-reset" style="margin-top: 40px;">
+            RESET SYSTEM
         </button>
     </div>
 
     <div class="main">
         <div id="news-banner" class="news-banner">
-            <div class="news-tag">BREAKING NEWS</div>
+            <div class="news-tag" id="lbl-news-tag">BREAKING NEWS</div>
             <div id="news-title" class="news-title">NEWS</div>
             <div id="news-desc" class="news-desc">...</div>
         </div>
         <div class="leaderboard-header">
-            <h2>排行榜</h2>
+            <h2 id="lbl-lb">Leaderboard</h2>
             <span id="status-tag" class="status-tag status-waiting">
-                <span class="status-dot"></span> 等待中
+                <span class="status-dot"></span> <span id="status-text">Waiting</span>
             </span>
         </div>
         <div id="leaderboard"></div>
@@ -176,26 +119,85 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        const i18n = {
+            en: {
+                langBtn: "中文", console: "Console", adminAuth: "Admin Authentication", passPlace: "Enter Password", login: "LOGIN",
+                accessDenied: "Access Denied", prepPhase: "Preparation Phase", ops: "Operations", startRound: "START ROUND",
+                endGame: "END GAME ◼", market: "Market", reset: "RESET SYSTEM", newsTag: "BREAKING NEWS", lbTitle: "Leaderboard",
+                waiting: "Waiting", active: "Active", ended: "Ended", waitingPlayers: "Waiting for players...",
+                confirmEnd: "Are you sure you want to end the game?", confirmReset: "WARNING: This will delete all data and reset the system. Are you sure?",
+                cash: "CASH", dep: "DEP", sec: "SEC"
+            },
+            tc: {
+                langBtn: "EN", console: "控制台", adminAuth: "管理員身分驗證", passPlace: "輸入密碼", login: "登入",
+                accessDenied: "密碼錯誤", prepPhase: "準備階段", ops: "操作", startRound: "開始回合",
+                endGame: "結束遊戲 ◼", market: "市場監控", reset: "重置系統", newsTag: "最新快訊", lbTitle: "排行榜",
+                waiting: "等待中", active: "進行中", ended: "已結束", waitingPlayers: "等待玩家加入...",
+                confirmEnd: "確定要結束遊戲嗎？", confirmReset: "警告：這將刪除所有數據並重啟。確定?",
+                cash: "現金", dep: "定存", sec: "證券"
+            }
+        };
+
+        let currentLang = localStorage.getItem('appLang') || 'en';
+        function t(key) { return i18n[currentLang][key] || key; }
+
+        function toggleLang() {
+            currentLang = currentLang === 'en' ? 'tc' : 'en';
+            localStorage.setItem('appLang', currentLang);
+            updateStaticUI();
+            socket.emit('request_host_update'); // trigger re-render if needed, fallback to current data
+            if(window.lastData) updateUIWithData(window.lastData);
+        }
+
+        function updateStaticUI() {
+            document.documentElement.lang = currentLang;
+            document.getElementById('lang-toggle').innerText = t('langBtn');
+            document.getElementById('login-title').innerText = t('console');
+            document.getElementById('login-sub').innerText = t('adminAuth');
+            document.getElementById('login-pass').placeholder = t('passPlace');
+            document.getElementById('btn-login').innerText = t('login');
+            document.getElementById('login-err').innerText = t('accessDenied');
+            document.getElementById('lbl-ops').innerText = t('ops');
+            document.getElementById('btn-stop').innerText = t('endGame');
+            document.getElementById('lbl-market').innerText = t('market');
+            document.getElementById('btn-reset').innerText = t('reset');
+            document.getElementById('lbl-news-tag').innerText = t('newsTag');
+            document.getElementById('lbl-lb').innerText = t('lbTitle');
+            
+            if (document.getElementById('round-title').innerText === 'Preparation Phase' || document.getElementById('round-title').innerText === '準備階段') {
+                document.getElementById('round-title').innerText = t('prepPhase');
+            }
+        }
+        
+        window.onload = updateStaticUI;
+        window.lastData = null;
+
         const socket = io();
         function attemptLogin() { const pass = document.getElementById('login-pass').value; socket.emit('join_game', 'host', pass); }
         document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key === 'Enter') attemptLogin(); });
         socket.on('host_login_success', () => { document.getElementById('login-overlay').style.display = 'none'; });
-        socket.on('error_msg', (msg) => { document.getElementById('login-err').style.display = 'block'; document.getElementById('login-err').innerText = msg; });
+        socket.on('error_msg', (msg) => { document.getElementById('login-err').style.display = 'block'; document.getElementById('login-err').innerText = t('accessDenied'); });
 
         socket.on('host_update', (data) => {
-            document.getElementById('round-title').innerText = data.round === 0 ? "準備階段" : `Round ${data.round}`;
+            window.lastData = data;
+            updateUIWithData(data);
+        });
+        
+        function updateUIWithData(data) {
+            if (!data) return;
+            document.getElementById('round-title').innerText = data.round === 0 ? t('prepPhase') : `Round ${data.round}`;
             const btnNext = document.getElementById('btn-next');
-            btnNext.innerHTML = `START ROUND ${data.round+1} ➔`;
+            btnNext.innerHTML = `${t('startRound')} ${data.round+1} ➔`;
 
             let statusTag = document.getElementById('status-tag');
             if(data.status === 'ended') {
                 statusTag.className = 'status-tag status-ended';
-                statusTag.innerHTML = '<span class="status-dot"></span> 已結束 (ENDED)';
+                document.getElementById('status-text').innerText = t('ended');
                 btnNext.style.display = 'none';
                 document.getElementById('btn-stop').style.display = 'none';
             } else {
                 statusTag.className = 'status-tag status-active';
-                statusTag.innerHTML = '<span class="status-dot"></span> 進行中 (ACTIVE)';
+                document.getElementById('status-text').innerText = data.round === 0 ? t('waiting') : t('active');
                 btnNext.style.display = 'flex';
                 document.getElementById('btn-stop').style.display = 'flex';
             }
@@ -210,7 +212,7 @@
             } else {
                 document.getElementById('news-banner').style.display = 'none';
             }
-        });
+        }
 
         function renderMarket(market) {
             const list = document.getElementById('market-list');
@@ -243,7 +245,7 @@
             }).sort((a, b) => b.total - a.total);
 
             if (ranking.length === 0) {
-                list.innerHTML = '<div class="empty-state"><div class="msg">等待玩家加入 (WAITING FOR PLAYERS...)</div></div>';
+                list.innerHTML = `<div class="empty-state"><div class="msg">${t('waitingPlayers')}</div></div>`;
                 return;
             }
 
@@ -256,9 +258,9 @@
                         <div style="min-width:0;">
                             <div class="player-name">${p.name}</div>
                             <div class="player-detail">
-                                <span>CASH $${Math.floor(p.cash).toLocaleString()}</span>
-                                <span>DEP $${Math.floor(depTotal).toLocaleString()}</span>
-                                <span>SEC $${Math.floor(p.stockVal).toLocaleString()}</span>
+                                <span>${t('cash')} $${Math.floor(p.cash).toLocaleString()}</span>
+                                <span>${t('dep')} $${Math.floor(depTotal).toLocaleString()}</span>
+                                <span>${t('sec')} $${Math.floor(p.stockVal).toLocaleString()}</span>
                             </div>
                         </div>
                     </div>

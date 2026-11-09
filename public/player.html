@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>投資操作</title>
+    <title>Market Simulator</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
         
@@ -17,7 +17,6 @@
             --text-dim: #686868;
             --green: #1B5E20;
             --red: #B71C1C;
-            --amber: #B9770E;
             --font-sans: 'Inter', -apple-system, sans-serif;
             --font-serif: 'Playfair Display', serif;
         }
@@ -34,55 +33,27 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        h1, h2, h3, .info-val, #final-assets {
-            font-family: var(--font-serif);
-            font-weight: 500;
-            letter-spacing: -0.5px;
-        }
+        h1, h2, h3, .info-val, #final-assets { font-family: var(--font-serif); font-weight: 500; letter-spacing: -0.5px; }
 
-        .app-container {
-            max-width: 1400px; 
-            margin: 0 auto;
-        }
+        .app-container { max-width: 1400px; margin: 0 auto; }
         
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-            margin-bottom: 32px;
-            align-items: start;
-        }
-        .market-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-        }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 32px; align-items: start; }
+        .market-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
 
         .card {
-            background: var(--surface); 
-            padding: 16px; 
-            border: 1px solid var(--border);
-            border-radius: 0;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
+            background: var(--surface); padding: 16px; border: 1px solid var(--border);
+            border-radius: 0; box-shadow: 4px 4px 0px rgba(0,0,0,0.05); height: 100%; display: flex; flex-direction: column;
         }
 
         select, input[type="text"], input[type="number"] {
             width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 0;
             background: var(--surface); font-size: 14px; margin-bottom: 12px; box-sizing: border-box;
-            outline: none; -webkit-appearance: none; color: var(--text); font-family: var(--font-sans);
-            transition: box-shadow 0.2s;
+            outline: none; -webkit-appearance: none; color: var(--text); font-family: var(--font-sans); transition: box-shadow 0.2s;
         }
         select:focus, input:focus { box-shadow: 2px 2px 0px rgba(0,0,0,1); }
 
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; height: 100%; }
-        .info-box {
-            background: var(--surface); padding: 12px; text-align: left;
-            border: 1px solid var(--border); border-radius: 0;
-            display: flex; flex-direction: column; justify-content: center;
-        }
+        .info-box { background: var(--surface); padding: 12px; text-align: left; border: 1px solid var(--border); border-radius: 0; display: flex; flex-direction: column; justify-content: center; }
         .info-label { font-size: 9px; color: var(--text-dim); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
         .info-val { font-size: 24px; color: var(--text); } 
         .info-val-accent { color: var(--text); }
@@ -98,68 +69,33 @@
         .btn-action { background: var(--text); color: var(--surface); width: 100%; }
         .btn-disabled { background: var(--border-light); color: var(--text-dim); border-color: var(--border-light); pointer-events: none; }
 
-        .tag {
-            font-size: 9px; padding: 4px 8px; border-radius: 0; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 1px; display: inline-block; 
-            vertical-align: middle; margin-left: 8px; border: 1px solid var(--border);
-            background: transparent; color: var(--text);
-        }
-
+        .tag { font-size: 9px; padding: 4px 8px; border-radius: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: inline-block; vertical-align: middle; margin-left: 8px; border: 1px solid var(--border); background: transparent; color: var(--text); }
         .text-up { color: var(--green); } .text-down { color: var(--red); }
         .price-change { font-size: 12px; font-weight: 500; font-family: var(--font-sans); margin-top: 4px; display: block;}
-
-        .deposit-item {
-            border-bottom: 1px solid var(--border-light); padding: 16px 0; font-size: 14px;
-            display: flex; justify-content: space-between; align-items: flex-start;
-        }
+        
+        .deposit-item { border-bottom: 1px solid var(--border-light); padding: 16px 0; font-size: 14px; display: flex; justify-content: space-between; align-items: flex-start; }
         .deposit-item:last-child { border-bottom: none; }
 
-        .section-title {
-            font-family: var(--font-serif);
-            font-size: 22px; font-weight: 400; letter-spacing: -0.5px;
-            color: var(--text); margin: 0 0 16px 0;
-            border-bottom: 2px solid var(--border); padding-bottom: 12px;
-        }
+        .section-title { font-family: var(--font-serif); font-size: 22px; font-weight: 400; letter-spacing: -0.5px; color: var(--text); margin: 0 0 16px 0; border-bottom: 2px solid var(--border); padding-bottom: 12px; }
 
         .holding-bar {
-            background: var(--surface-2); padding: 12px; font-size: 10px;
-            margin: 16px 0; color: var(--text-dim); border: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-            text-transform: uppercase; letter-spacing: 1px;
-            margin-top: auto; 
+            background: var(--surface-2); padding: 12px; font-size: 10px; margin: 16px 0; color: var(--text-dim); border: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; letter-spacing: 1px; margin-top: auto; 
         }
         .holding-bar strong { color: var(--text); font-family: var(--font-serif); font-size: 14px; letter-spacing: 0; text-transform: none;}
 
         .trade-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
         .trade-col select { margin: 0; font-size: 12px; padding: 10px; }
+        .bond-info { font-size: 10px; color: var(--text-dim); border: 1px solid var(--border-light); padding: 2px 6px; display: inline-block; margin-top: 6px; font-weight: 500; }
 
-        .bond-info {
-            font-size: 10px; color: var(--text-dim); border: 1px solid var(--border-light);
-            padding: 2px 6px; display: inline-block; margin-top: 6px; font-weight: 500;
-        }
-
-        #news-modal, #end-screen {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(245, 245, 240, 0.95); backdrop-filter: blur(4px); z-index: 200;
-            display: none; align-items: center; justify-content: center; padding: 12px;
-        }
-        .modal-card {
-            background: var(--surface); width: 100%; max-width: 440px; padding: 24px;
-            border-radius: 0; text-align: left; border: 1px solid var(--border);
-            box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
-            max-height: 90vh; overflow-y: auto; 
-        }
+        #news-modal, #end-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(245, 245, 240, 0.95); backdrop-filter: blur(4px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 12px; }
+        .modal-card { background: var(--surface); width: 100%; max-width: 440px; padding: 24px; border-radius: 0; text-align: left; border: 1px solid var(--border); box-shadow: 8px 8px 0px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
         .modal-card h1 { font-size: 32px; margin-bottom: 12px; }
         .modal-card h2 { font-size: 24px; margin-bottom: 12px; }
         .modal-card p { font-size: 13px; color: var(--text-dim); line-height: 1.6; font-family: var(--font-sans); }
         .modal-label { font-size: 9px; font-weight: 600; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 12px; text-transform: uppercase;}
 
-        #toast {
-            position: fixed; bottom: max(40px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
-            background: var(--text); color: var(--surface); padding: 12px 24px; border-radius: 0;
-            display: none; z-index: 100; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
-            border: 1px solid var(--border); box-shadow: 4px 4px 0px rgba(0,0,0,0.2); white-space: nowrap;
-        }
+        #toast { position: fixed; bottom: max(40px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: var(--text); color: var(--surface); padding: 12px 24px; border-radius: 0; display: none; z-index: 100; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border: 1px solid var(--border); box-shadow: 4px 4px 0px rgba(0,0,0,0.2); white-space: nowrap; }
 
         #login-screen .card { padding: 40px 24px; box-shadow: 8px 8px 0px rgba(0,0,0,0.05); text-align: left; height: auto;}
         #login-screen h2 { font-size: 36px; font-weight: 500; letter-spacing: -1px; margin-bottom: 8px; }
@@ -171,22 +107,16 @@
         .player-meta { font-size: 9px; color: var(--text-dim); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px;}
         .player-meta a { color: var(--text); cursor: pointer; text-decoration: underline; font-weight: 600;}
         
-        .round-pill {
-            background: transparent; color: var(--text); font-size: 9px; font-weight: 600;
-            padding: 4px 8px; border: 1px solid var(--border); margin-bottom: 4px;
-            white-space: nowrap; text-transform: uppercase; letter-spacing: 1px;
-        }
+        .round-pill { background: transparent; color: var(--text); font-size: 9px; font-weight: 600; padding: 4px 8px; border: 1px solid var(--border); margin-bottom: 4px; white-space: nowrap; text-transform: uppercase; letter-spacing: 1px; }
 
         .deposit-form { background: transparent; padding: 0; margin-bottom: 8px; border: none; }
         .deposit-form .row { display: flex; gap: 8px; flex-direction: column; }
         
         .market-price-disp { font-size: 22px; font-weight: 500; font-family: var(--font-serif); letter-spacing: -0.5px; }
         
-        #final-rank-badge {
-            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; 
-            color: var(--surface); background: var(--text); border: 1px solid var(--border); 
-            padding: 6px 12px; display: inline-block; margin-bottom: 16px; font-family: var(--font-sans);
-        }
+        #final-rank-badge { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--surface); background: var(--text); border: 1px solid var(--border); padding: 6px 12px; display: inline-block; margin-bottom: 16px; font-family: var(--font-sans); }
+
+        .lang-btn { position: fixed; top: 16px; right: 16px; background: transparent; color: var(--text); border: 1px solid var(--border); padding: 6px 10px; font-size: 10px; font-weight: 600; cursor: pointer; z-index: 1000; font-family: var(--font-sans); text-transform: uppercase;}
 
         @media (min-width: 768px) {
             body { padding: 24px 32px; }
@@ -205,6 +135,7 @@
             .section-title { font-size: 26px; margin: 0 0 24px 0; }
             .market-price-disp { font-size: 26px; }
             #final-rank-badge { font-size: 14px; padding: 8px 16px; letter-spacing: 2px; margin-bottom: 24px; }
+            .lang-btn { top: 24px; right: 32px; }
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -212,20 +143,22 @@
     </style>
 </head>
 <body>
+    <button id="lang-toggle" class="lang-btn" onclick="toggleLang()">中文</button>
+
     <div id="news-modal">
         <div class="modal-card">
-            <div class="modal-label">BREAKING NEWS</div>
-            <h2 id="modal-title">快訊</h2>
+            <div class="modal-label" id="lbl-news-tag">BREAKING NEWS</div>
+            <h2 id="modal-title">News</h2>
             <p id="modal-desc" style="margin-bottom: 32px;">...</p>
-            <button class="btn-action" onclick="document.getElementById('news-modal').style.display='none'">我知道了</button>
+            <button class="btn-action" id="btn-news" onclick="document.getElementById('news-modal').style.display='none'">Got it</button>
         </div>
     </div>
     
     <div id="end-screen">
         <div class="modal-card">
-            <div class="modal-label">SESSION ENDED</div>
+            <div class="modal-label" id="lbl-end-tag">SESSION ENDED</div>
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <h1>遊戲結束</h1>
+                <h1 id="end-title">Game Over</h1>
                 <div id="final-rank-badge">RANK #--</div>
             </div>
             
@@ -233,7 +166,7 @@
             
             <div id="final-breakdown" style="text-align: left; background: var(--surface-2); padding: 16px; font-size: 12px; border: 1px solid var(--border); margin-bottom: 24px;"></div>
             
-            <div class="modal-label" style="margin-bottom: 12px; border-bottom: 2px solid var(--border); padding-bottom: 8px; color: var(--text);">LEADERBOARD</div>
+            <div class="modal-label" id="lbl-lb" style="margin-bottom: 12px; border-bottom: 2px solid var(--border); padding-bottom: 8px; color: var(--text);">LEADERBOARD</div>
             <div id="final-leaderboard"></div>
         </div>
     </div>
@@ -241,33 +174,33 @@
     <div id="login-screen" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 16px;">
         <div class="card" style="max-width: 400px; margin: 0 auto; width: 100%;">
             <div class="modal-label">01 / SIMULATOR</div>
-            <h2>股市大亨</h2>
-            <div class="login-sub">Market Simulator</div>
-            <input type="text" id="username" placeholder="輸入姓名 / 組別">
-            <button class="btn-action" style="margin-top: 16px;" onclick="attemptJoin()">進入市場</button>
+            <h2 id="sim-title">Market Simulator</h2>
+            <div class="login-sub" id="sim-sub">Enter to start trading</div>
+            <input type="text" id="username" placeholder="Enter Name / Group">
+            <button class="btn-action" id="btn-enter" style="margin-top: 16px;" onclick="attemptJoin()">Enter Market</button>
         </div>
     </div>
 
     <div id="game-screen" class="app-container" style="display:none;">
         <div class="header-row">
             <div>
-                <h1>我的資產</h1>
+                <h1 id="title-assets">My Assets</h1>
                 <div class="player-meta">
-                    CLIENT: <span id="player-name-display" style="font-weight: 600; color: var(--text);"></span> &nbsp;&nbsp;&middot;&nbsp;&nbsp; <a onclick="logout()">登出 (LOGOUT)</a>
+                    <span id="lbl-client">CLIENT:</span> <span id="player-name-display" style="font-weight: 600; color: var(--text);"></span> &nbsp;&nbsp;&middot;&nbsp;&nbsp; <a id="btn-logout" onclick="logout()">LOGOUT</a>
                 </div>
             </div>
-            <span id="round-display" class="round-pill">載入中...</span>
+            <span id="round-display" class="round-pill">Loading...</span>
         </div>
 
         <div class="dashboard-grid">
             <div class="card">
                 <div class="info-grid">
                     <div class="info-box">
-                        <div class="info-label">現金 (CASH)</div>
+                        <div class="info-label" id="lbl-cash">CASH</div>
                         <div class="info-val" id="p-cash">$0</div>
                     </div>
                     <div class="info-box">
-                        <div class="info-label">總資產 (TOTAL)</div>
+                        <div class="info-label" id="lbl-total">TOTAL ASSETS</div>
                         <div class="info-val info-val-accent" id="p-total">$0</div>
                     </div>
                 </div>
@@ -275,50 +208,115 @@
 
             <div class="card">
                 <div style="display:flex; align-items:baseline; justify-content:space-between; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
-                    <h3 style="font-size: 20px;">定期存款</h3>
-                    <span style="font-size: 9px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; color: var(--text-dim);">Time Deposit</span>
+                    <h3 style="font-size: 20px;" id="title-dep">Time Deposit</h3>
                 </div>
                 <div class="deposit-form">
                     <div class="row">
-                        <input type="number" id="deposit-amount" placeholder="金額 (Amount)" style="flex:1;">
+                        <input type="number" id="deposit-amount" placeholder="Amount" style="flex:1;">
                         <select id="deposit-duration" style="flex:1.2;">
-                            <option value="3">3個月 (0.125%)</option>
-                            <option value="6">6個月 (0.125%)</option>
-                            <option value="9">9個月 (0.150%)</option>
-                            <option value="12">12個月 (0.150%)</option>
+                            <!-- Populated by JS -->
                         </select>
                     </div>
-                    <button class="btn-buy" style="width:100%; margin-top: 8px;" onclick="createDeposit()">立即存入</button>
+                    <button class="btn-buy" id="btn-dep" style="width:100%; margin-top: 8px;" onclick="createDeposit()">Deposit Now</button>
                 </div>
                 <div id="deposit-list" style="margin-top: 16px;"></div>
             </div>
         </div>
 
-        <div class="section-title">市場報價 <span style="font-size: 10px; font-family: var(--font-sans); color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-left: 8px;">Market Overview</span></div>
+        <div class="section-title" id="title-market">Market Overview</div>
         <div id="market-list" class="market-grid"></div>
     </div>
     <div id="toast"></div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        // --- i18n Dictionary ---
+        const i18n = {
+            en: {
+                langBtn: "中文", simTitle: "Market Simulator", simSub: "Enter to start trading", namePlace: "Enter Name / Group", enterMarket: "Enter Market",
+                myAssets: "My Assets", client: "CLIENT:", logout: "LOGOUT", loading: "Loading...", cash: "CASH", total: "TOTAL ASSETS",
+                timeDeposit: "Time Deposit", amountPlace: "Amount", depBtn: "Deposit Now", noDep: "No Active Deposits",
+                marketTitle: "Market Overview", newsLabel: "BREAKING NEWS", newsBtn: "Got it", endLabel: "SESSION ENDED",
+                endTitle: "Game Over", endSub: "Final Asset Calculation", lbLabel: "LEADERBOARD", months: "Months", roundsLeft: "Rounds Left",
+                proc: "Processing", holding: "Holding", buy: "BUY", sell: "SELL", noCash: "No Cash", noHold: "No Holding", sec: "Securities",
+                you: "YOU", rank: "RANK", coupon: "Coupon"
+            },
+            tc: {
+                langBtn: "EN", simTitle: "股市大亨", simSub: "投資模擬器", namePlace: "輸入姓名 / 組別", enterMarket: "進入市場",
+                myAssets: "我的資產", client: "玩家:", logout: "登出", loading: "載入中...", cash: "現金", total: "總資產",
+                timeDeposit: "定期存款", amountPlace: "輸入金額", depBtn: "立即存入", noDep: "目前沒有定存",
+                marketTitle: "市場報價", newsLabel: "最新快訊", newsBtn: "我知道了", endLabel: "結算完成",
+                endTitle: "遊戲結束", endSub: "最終資產結算", lbLabel: "排行榜", months: "個月", roundsLeft: "剩餘回合",
+                proc: "結算中", holding: "持有", buy: "買入", sell: "賣出", noCash: "餘額不足", noHold: "無持倉", sec: "證券",
+                you: "自己", rank: "排名", coupon: "年息"
+            }
+        };
+
+        let currentLang = localStorage.getItem('appLang') || 'en';
+        function t(key) { return i18n[currentLang][key] || key; }
+
+        function toggleLang() {
+            currentLang = currentLang === 'en' ? 'tc' : 'en';
+            localStorage.setItem('appLang', currentLang);
+            updateStaticUI();
+            if (myData) { renderDeposits(myData.deposits); renderMarket(); }
+            if (document.getElementById('end-screen').style.display === 'flex') {
+                // Re-render final breakdown if game is over
+                const myUserId = getUserId();
+                socket.emit('request_game_over_render'); // fallback to simple refresh logic if possible, or just update UI.
+            }
+        }
+
+        function updateStaticUI() {
+            document.documentElement.lang = currentLang;
+            document.getElementById('lang-toggle').innerText = t('langBtn');
+            document.getElementById('sim-title').innerText = t('simTitle');
+            document.getElementById('sim-sub').innerText = t('simSub');
+            document.getElementById('username').placeholder = t('namePlace');
+            document.getElementById('btn-enter').innerText = t('enterMarket');
+            document.getElementById('title-assets').innerText = t('myAssets');
+            document.getElementById('lbl-client').innerText = t('client');
+            document.getElementById('btn-logout').innerText = t('logout');
+            document.getElementById('lbl-cash').innerText = t('cash');
+            document.getElementById('lbl-total').innerText = t('total');
+            document.getElementById('title-dep').innerText = t('timeDeposit');
+            document.getElementById('deposit-amount').placeholder = t('amountPlace');
+            document.getElementById('btn-dep').innerText = t('depBtn');
+            document.getElementById('title-market').innerText = t('marketTitle');
+            document.getElementById('lbl-news-tag').innerText = t('newsLabel');
+            document.getElementById('btn-news').innerText = t('newsBtn');
+            document.getElementById('lbl-end-tag').innerText = t('endLabel');
+            document.getElementById('end-title').innerText = t('endTitle');
+            document.getElementById('lbl-lb').innerText = t('lbLabel');
+
+            const depSel = document.getElementById('deposit-duration');
+            const oldVal = depSel.value || "3";
+            depSel.innerHTML = `
+                <option value="3">3 ${t('months')} (0.125%)</option>
+                <option value="6">6 ${t('months')} (0.125%)</option>
+                <option value="9">9 ${t('months')} (0.150%)</option>
+                <option value="12">12 ${t('months')} (0.150%)</option>
+            `;
+            depSel.value = oldVal;
+            
+            if(document.getElementById('round-display').innerText === 'Loading...' || document.getElementById('round-display').innerText === '載入中...') {
+                document.getElementById('round-display').innerText = t('loading');
+            }
+        }
+
         const socket = io();
         let myData = null, currentMarket = null, currentRound = 0;
 
         function getUserId() {
             let uid = localStorage.getItem('stockGameUID');
-            if (!uid) {
-                uid = 'user_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
-                localStorage.setItem('stockGameUID', uid);
-            }
+            if (!uid) { uid = 'user_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36); localStorage.setItem('stockGameUID', uid); }
             return uid;
         }
 
         window.onload = function() {
+            updateStaticUI();
             const savedName = localStorage.getItem('stockGameUser');
-            if (savedName) {
-                document.getElementById('username').value = savedName;
-                attemptJoin(true);
-            }
+            if (savedName) { document.getElementById('username').value = savedName; attemptJoin(true); }
         };
 
         function attemptJoin(isAuto = false) {
@@ -332,7 +330,7 @@
         }
 
         function logout() {
-            if(confirm("確定要登出並清除紀錄嗎？")) {
+            if(confirm("Are you sure?")) {
                 localStorage.removeItem('stockGameUser');
                 window.location.reload();
             }
@@ -347,12 +345,8 @@
 
         socket.on('init_player', data => {
             if(data.reload) {
-                localStorage.removeItem('stockGameUser');
-                localStorage.removeItem('stockGameUID');
-                window.location.reload();
-                return;
+                localStorage.removeItem('stockGameUser'); localStorage.removeItem('stockGameUID'); window.location.reload(); return;
             }
-            
             currentRound = data.round;
             document.getElementById('player-name-display').innerText = data.player.name;
             document.getElementById('login-screen').style.display = 'none';
@@ -378,42 +372,26 @@
             document.getElementById('news-modal').style.display = 'none';
             
             const myUserId = getUserId();
-            
             let uniquePlayersMap = {};
             for (let key in data.players) {
                 let p = data.players[key];
-                if (p && p.userId) {
-                    uniquePlayersMap[p.userId] = p;
-                }
+                if (p && p.userId) uniquePlayersMap[p.userId] = p;
             }
             
             let allPlayers = Object.values(uniquePlayersMap).map(p => {
                 let pStockVal = 0;
-                for(let code in p.portfolio) {
-                    if(data.market[code]) pStockVal += p.portfolio[code] * data.market[code].price;
-                }
-                let pDepTotal = 0;
-                if(p.deposits) p.deposits.forEach(d => pDepTotal += d.amount);
-                return {
-                    userId: p.userId,
-                    name: p.name,
-                    total: p.cash + pDepTotal + pStockVal,
-                    cash: p.cash,
-                    depTotal: pDepTotal,
-                    stockVal: pStockVal
-                };
+                for(let code in p.portfolio) { if(data.market[code]) pStockVal += p.portfolio[code] * data.market[code].price; }
+                let pDepTotal = 0; if(p.deposits) p.deposits.forEach(d => pDepTotal += d.amount);
+                return { userId: p.userId, name: p.name, total: p.cash + pDepTotal + pStockVal, cash: p.cash, depTotal: pDepTotal, stockVal: pStockVal };
             });
-            
             allPlayers.sort((a, b) => b.total - a.total);
-            
             let myRankIndex = allPlayers.findIndex(p => p.userId === myUserId);
             let myRank = myRankIndex + 1;
             let totalPlayers = allPlayers.length;
             
-            document.getElementById('final-rank-badge').innerText = `RANK #${myRank} / ${totalPlayers}`;
+            document.getElementById('final-rank-badge').innerText = `${t('rank')} #${myRank} / ${totalPlayers}`;
             
             let me = allPlayers[myRankIndex];
-            
             if(!me) {
                 let fallbackMe = data.players[socket.id] || myData;
                 let sVal = 0; for(let c in fallbackMe.portfolio) if(data.market[c]) sVal += fallbackMe.portfolio[c] * data.market[c].price;
@@ -423,9 +401,9 @@
 
             document.getElementById('final-assets').innerText = '$' + Math.floor(me.total).toLocaleString();
             document.getElementById('final-breakdown').innerHTML =
-                `<div style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text); border-bottom: 1px solid var(--border-light); padding-bottom: 8px;"><span style="color:var(--text-dim); text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">現金 (Cash)</span> <span style="font-weight:600; font-family: var(--font-serif); font-size: 14px;">$${Math.floor(me.cash).toLocaleString()}</span></div>` +
-                `<div style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text); border-bottom: 1px solid var(--border-light); padding-bottom: 8px;"><span style="color:var(--text-dim); text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">定存 (Time Deposit)</span> <span style="font-weight:600; font-family: var(--font-serif); font-size: 14px;">$${Math.floor(me.depTotal).toLocaleString()}</span></div>` +
-                `<div style="display:flex; justify-content:space-between; color:var(--text);"><span style="color:var(--text-dim); text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">證券 (Securities)</span> <span style="font-weight:600; font-family: var(--font-serif); font-size: 14px;">$${Math.floor(me.stockVal).toLocaleString()}</span></div>`;
+                `<div style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text); border-bottom: 1px solid var(--border-light); padding-bottom: 8px;"><span style="color:var(--text-dim); text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">${t('cash')}</span> <span style="font-weight:600; font-family: var(--font-serif); font-size: 14px;">$${Math.floor(me.cash).toLocaleString()}</span></div>` +
+                `<div style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text); border-bottom: 1px solid var(--border-light); padding-bottom: 8px;"><span style="color:var(--text-dim); text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">${t('timeDeposit')}</span> <span style="font-weight:600; font-family: var(--font-serif); font-size: 14px;">$${Math.floor(me.depTotal).toLocaleString()}</span></div>` +
+                `<div style="display:flex; justify-content:space-between; color:var(--text);"><span style="color:var(--text-dim); text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">${t('sec')}</span> <span style="font-weight:600; font-family: var(--font-serif); font-size: 14px;">$${Math.floor(me.stockVal).toLocaleString()}</span></div>`;
                 
             let lbHtml = '';
             let topPlayers = allPlayers.slice(0, 5);
@@ -433,15 +411,13 @@
                 let isMe = (p.userId === myUserId);
                 let textColor = isMe ? 'var(--text)' : 'var(--text-dim)';
                 let fontWeight = isMe ? '700' : '500';
-                let indicator = isMe ? `<span style="font-size: 9px; margin-left: 8px; background: var(--text); color: var(--surface); padding: 2px 6px; font-family: var(--font-sans);">YOU</span>` : '';
-                
+                let indicator = isMe ? `<span style="font-size: 9px; margin-left: 8px; background: var(--text); color: var(--surface); padding: 2px 6px; font-family: var(--font-sans);">${t('you')}</span>` : '';
                 lbHtml += `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; color: ${textColor}; padding-bottom: 8px; border-bottom: 1px dotted var(--border-light);">
                     <div style="font-family: var(--font-serif); font-size: 14px; font-weight: ${fontWeight};"><span style="font-size: 11px; margin-right: 12px; font-family: var(--font-sans); color: var(--text-dim);">0${i+1}</span> ${p.name} ${indicator}</div>
                     <div style="font-family: var(--font-serif); font-size: 14px; font-weight: ${fontWeight};">$${Math.floor(p.total).toLocaleString()}</div>
                 </div>`;
             });
             document.getElementById('final-leaderboard').innerHTML = lbHtml;
-
             document.getElementById('end-screen').style.display = 'flex';
         });
 
@@ -470,7 +446,7 @@
         function renderDeposits(deposits) {
             const list = document.getElementById('deposit-list');
             if(!deposits || deposits.length === 0) {
-                list.innerHTML = '<div style="text-align:left; color:var(--text-dim); font-size:11px; padding:12px; border: 1px solid var(--border-light); text-transform: uppercase; letter-spacing: 1px;">目前沒有定存 (No Active Deposits)</div>';
+                list.innerHTML = `<div style="text-align:left; color:var(--text-dim); font-size:11px; padding:12px; border: 1px solid var(--border-light); text-transform: uppercase; letter-spacing: 1px;">${t('noDep')}</div>`;
                 return;
             }
             list.innerHTML = deposits.map(d => {
@@ -481,10 +457,10 @@
                 return `<div class="deposit-item">
                     <div>
                         <div style="font-weight:500; font-family: var(--font-serif); font-size: 18px; color:var(--text);">$${d.amount.toLocaleString()}</div>
-                        <div style="font-size:10px; color:var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">${d.duration}個月期 (Months)</div>
+                        <div style="font-size:10px; color:var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">${d.duration} ${t('months')}</div>
                     </div>
                     <div style="font-size:8px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:${statusColor}; background:${statusBg}; padding:6px 10px; border:1px solid ${statusBorder};">
-                        ${roundsLeft <= 0 ? "結算中 (Proc.)" : `剩 ${roundsLeft} 回合`}
+                        ${roundsLeft <= 0 ? t('proc') : `${roundsLeft} ${t('roundsLeft')}`}
                     </div>
                 </div>`;
             }).join('');
@@ -501,19 +477,24 @@
                 let feeMultiplier = item.type === 'stock' ? 1.004 : 1;
                 let maxBuy = Math.floor(myData.cash / (costPerLot * feeMultiplier));
                 if(item.type === 'bond' && (costPerLot < item.minEntry)) { let minLots = Math.ceil(item.minEntry / costPerLot); if (maxBuy < minLots) maxBuy = 0; }
-                let unitName = item.type === 'gold' ? '兩' : '手';
-                let shareUnit = item.type === 'gold' ? '兩' : (item.type === 'bond' ? '單位' : '股');
-                let buyOptions = maxBuy === 0 ? `<option value="0">餘額不足</option>` : "";
+                
+                let unitName = item.type === 'gold' ? (currentLang === 'en' ? 'Tael' : '兩') : (currentLang === 'en' ? 'Lot' : '手');
+                let shareUnit = item.type === 'gold' ? (currentLang === 'en' ? 'Tael' : '兩') : (item.type === 'bond' ? (currentLang === 'en' ? 'Unit' : '單位') : (currentLang === 'en' ? 'Share' : '股'));
+                
+                let buyOptions = maxBuy === 0 ? `<option value="0">${t('noCash')}</option>` : "";
                 if (maxBuy > 0) { let limit = Math.min(maxBuy, 100); for(let i=1; i<=limit; i++) buyOptions += `<option value="${i}">${i} ${unitName} ($${Math.floor(i*costPerLot).toLocaleString()})</option>`; }
-                let sellOptions = lotsHeld === 0 ? `<option value="0">無持倉</option>` : "";
+                let sellOptions = lotsHeld === 0 ? `<option value="0">${t('noHold')}</option>` : "";
                 if (lotsHeld > 0) { let limit = Math.min(lotsHeld, 100); for(let i=1; i<=limit; i++) sellOptions += `<option value="${i}">${i} ${unitName}</option>`; }
+                
                 let change = item.change || 0; let pct = item.changePercent || 0;
                 let colorClass = change >= 0 ? "text-up" : "text-down";
                 let arrow = change > 0 ? "↗" : (change < 0 ? "↘" : "");
                 let changeDisplay = change !== 0 ? `<span class="price-change ${colorClass}">${arrow} ${Math.abs(change).toFixed(2)} (${change>=0?"+":""}${pct.toFixed(1)}%)</span>` : `<span class="price-change" style="color:var(--text-dim);">—</span>`;
-                let tagName = item.type === 'gold' ? 'GOLD' : (item.type === 'bond' ? 'BOND' : 'STOCK');
-                let extraInfo = item.type === 'bond' ? `<br><span class="bond-info">年息 ${item.coupon}%</span>` : '';
                 
+                let tagName = item.type === 'gold' ? 'GOLD' : (item.type === 'bond' ? 'BOND' : 'STOCK');
+                let extraInfo = item.type === 'bond' ? `<br><span class="bond-info">${t('coupon')} ${item.coupon}%</span>` : '';
+                
+                // Note: item.name is inherently traditional Chinese as required
                 return `<div class="card">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                         <div>
@@ -527,18 +508,18 @@
                     </div>
                     
                     <div class="holding-bar">
-                        <span>持有 (Holding)</span>
+                        <span>${t('holding')}</span>
                         <span><strong>${holdingQty}</strong> ${shareUnit} / ${lotsHeld} ${unitName}</span>
                     </div>
                     
                     <div class="trade-grid">
                         <div class="trade-col">
                             <select id="buy-select-${code}">${buyOptions}</select>
-                            <button class="${maxBuy > 0 ? 'btn-buy' : 'btn-disabled'}" style="width:100%; margin-top:4px;" onclick="trade('buy', '${code}')">買入 (BUY)</button>
+                            <button class="${maxBuy > 0 ? 'btn-buy' : 'btn-disabled'}" style="width:100%; margin-top:4px;" onclick="trade('buy', '${code}')">${t('buy')}</button>
                         </div>
                         <div class="trade-col">
                             <select id="sell-select-${code}">${sellOptions}</select>
-                            <button class="${lotsHeld > 0 ? 'btn-sell' : 'btn-disabled'}" style="width:100%; margin-top:4px;" onclick="trade('sell', '${code}')">賣出 (SELL)</button>
+                            <button class="${lotsHeld > 0 ? 'btn-sell' : 'btn-disabled'}" style="width:100%; margin-top:4px;" onclick="trade('sell', '${code}')">${t('sell')}</button>
                         </div>
                     </div>
                 </div>`;
@@ -554,7 +535,7 @@
         function createDeposit() {
             const amt = document.getElementById('deposit-amount').value;
             const dur = document.getElementById('deposit-duration').value;
-            if(!amt || amt <= 0) return showToast("請輸入有效金額");
+            if(!amt || amt <= 0) return showToast("Invalid amount");
             socket.emit('create_deposit', amt, dur);
             document.getElementById('deposit-amount').value = '';
         }
