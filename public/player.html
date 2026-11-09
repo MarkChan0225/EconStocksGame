@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>投資操作 | Editorial Grid</title>
+    <title>投資操作</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
         
@@ -242,7 +242,7 @@
         <div class="card" style="max-width: 400px; margin: 0 auto; width: 100%;">
             <div class="modal-label">01 / SIMULATOR</div>
             <h2>股市大亨</h2>
-            <div class="login-sub">Market Simulator &middot; Editorial Ed.</div>
+            <div class="login-sub">Market Simulator</div>
             <input type="text" id="username" placeholder="輸入姓名 / 組別">
             <button class="btn-action" style="margin-top: 16px;" onclick="attemptJoin()">進入市場</button>
         </div>
@@ -346,12 +346,11 @@
         });
 
         socket.on('init_player', data => {
-            // [修復核心]：當伺服器發送重置信號時，強制清空本地暫存的用戶資料與 UID
             if(data.reload) {
                 localStorage.removeItem('stockGameUser');
                 localStorage.removeItem('stockGameUID');
                 window.location.reload();
-                return; // 必須中斷後續渲染，否則會因為讀不到 data.player.name 導致崩潰
+                return;
             }
             
             currentRound = data.round;
