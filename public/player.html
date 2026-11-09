@@ -69,7 +69,10 @@
         .btn-action { background: var(--text); color: var(--surface); width: 100%; }
         .btn-disabled { background: var(--border-light); color: var(--text-dim); border-color: var(--border-light); pointer-events: none; }
 
-        .tag { font-size: 9px; padding: 4px 8px; border-radius: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: inline-block; vertical-align: middle; margin-left: 8px; border: 1px solid var(--border); background: transparent; color: var(--text); }
+        /* 讓標籤具備按鈕的互動感 */
+        .tag { font-size: 9px; padding: 4px 8px; border-radius: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: inline-block; vertical-align: middle; margin-left: 8px; border: 1px solid var(--border); background: transparent; color: var(--text); transition: all 0.2s;}
+        .tag:hover { background: var(--text); color: var(--surface); cursor: pointer; }
+        
         .text-up { color: var(--green); } .text-down { color: var(--red); }
         .price-change { font-size: 12px; font-weight: 500; font-family: var(--font-sans); margin-top: 4px; display: block;}
         
@@ -88,7 +91,7 @@
         .trade-col select { margin: 0; font-size: 12px; padding: 10px; }
         .bond-info { font-size: 10px; color: var(--text-dim); border: 1px solid var(--border-light); padding: 2px 6px; display: inline-block; margin-top: 6px; font-weight: 500; }
 
-        #news-modal, #end-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(245, 245, 240, 0.95); backdrop-filter: blur(4px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 12px; }
+        #news-modal, #end-screen, #info-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(245, 245, 240, 0.95); backdrop-filter: blur(4px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 12px; }
         .modal-card { background: var(--surface); width: 100%; max-width: 440px; padding: 24px; border-radius: 0; text-align: left; border: 1px solid var(--border); box-shadow: 8px 8px 0px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
         .modal-card h1 { font-size: 32px; margin-bottom: 12px; }
         .modal-card h2 { font-size: 24px; margin-bottom: 12px; }
@@ -116,14 +119,7 @@
         
         #final-rank-badge { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--surface); background: var(--text); border: 1px solid var(--border); padding: 6px 12px; display: inline-block; margin-bottom: 16px; font-family: var(--font-sans); }
 
-        /* 修復語言切換按鈕，覆蓋全域 button 樣式 */
-        .lang-btn { 
-            position: fixed; top: 16px; right: 16px; 
-            width: auto; flex: none; display: inline-block; 
-            background: transparent; color: var(--text); border: 1px solid var(--border); 
-            padding: 6px 10px; font-size: 10px; font-weight: 600; cursor: pointer; 
-            z-index: 1000; font-family: var(--font-sans); text-transform: uppercase;
-        }
+        .lang-btn { position: fixed; top: 16px; right: 16px; background: transparent; color: var(--text); border: 1px solid var(--border); padding: 6px 10px; font-size: 10px; font-weight: 600; cursor: pointer; z-index: 1000; font-family: var(--font-sans); text-transform: uppercase;}
 
         @media (min-width: 768px) {
             body { padding: 24px 32px; }
@@ -151,6 +147,21 @@
 </head>
 <body>
     <button id="lang-toggle" class="lang-btn" onclick="toggleLang()">中文</button>
+
+    <div id="info-modal">
+        <div class="modal-card">
+            <div class="modal-label" id="lbl-info-tag">KNOWLEDGE BASE</div>
+            <h2 id="info-title" style="margin-bottom: 24px;">Asset</h2>
+            
+            <div class="modal-label" id="lbl-info-dse" style="border-bottom: 1px solid var(--border-light); padding-bottom: 8px; margin-bottom: 8px; color: var(--text);">HKDSE CONCEPT</div>
+            <p id="info-dse" style="margin-bottom: 24px;">...</p>
+
+            <div class="modal-label" id="lbl-info-fact" style="border-bottom: 1px solid var(--border-light); padding-bottom: 8px; margin-bottom: 8px; color: var(--text);">DID YOU KNOW?</div>
+            <p id="info-fact" style="margin-bottom: 32px;">...</p>
+
+            <button class="btn-action" id="btn-info-close" onclick="document.getElementById('info-modal').style.display='none'">Close</button>
+        </div>
+    </div>
 
     <div id="news-modal">
         <div class="modal-card">
@@ -245,7 +256,17 @@
                 marketTitle: "Market Overview", newsLabel: "BREAKING NEWS", newsBtn: "Got it", endLabel: "SESSION ENDED",
                 endTitle: "Game Over", endSub: "Final Asset Calculation", lbLabel: "LEADERBOARD", months: "Months", roundsLeft: "Rounds Left",
                 proc: "Processing", holding: "Holding", buy: "BUY", sell: "SELL", noCash: "No Cash", noHold: "No Holding", sec: "Securities",
-                you: "YOU", rank: "RANK", coupon: "Coupon"
+                you: "YOU", rank: "RANK", coupon: "Coupon", 
+                infoClose: "Close", infoTag: "KNOWLEDGE BASE", infoDSELabel: "HKDSE BAFS CONCEPT", infoFactLabel: "DID YOU KNOW?",
+                infoStockTitle: "Stock (Equity)",
+                infoStockDSE: "Represents ownership in a company (equity financing). Holders have voting rights and may receive dividends, but bear higher risks as returns are not guaranteed.",
+                infoStockFact: "The first modern stock market was established in Amsterdam in 1611 by the Dutch East India Company.",
+                infoBondTitle: "Bond (Debt)",
+                infoBondDSE: "Represents a loan made by an investor to a borrower (debt financing). It usually pays fixed interest (coupon) and returns the principal at maturity. Generally lower risk than stocks.",
+                infoBondFact: "During WWI, the US government issued 'Liberty Bonds' to finance the war effort, which popularized bonds among retail investors.",
+                infoGoldTitle: "Gold (Commodity)",
+                infoGoldDSE: "A physical asset often used as a hedge against inflation and economic instability. It pays no interest or dividends, meaning its return relies solely on price appreciation.",
+                infoGoldFact: "All the gold ever mined in human history would fit into a cube measuring just about 22 meters on each side!"
             },
             tc: {
                 langBtn: "EN", simTitle: "股市大亨", simSub: "投資模擬器", namePlace: "輸入姓名 / 組別", enterMarket: "進入市場",
@@ -254,7 +275,17 @@
                 marketTitle: "市場報價", newsLabel: "最新快訊", newsBtn: "我知道了", endLabel: "結算完成",
                 endTitle: "遊戲結束", endSub: "最終資產結算", lbLabel: "排行榜", months: "個月", roundsLeft: "剩餘回合",
                 proc: "結算中", holding: "持有", buy: "買入", sell: "賣出", noCash: "餘額不足", noHold: "無持倉", sec: "證券",
-                you: "自己", rank: "排名", coupon: "年息"
+                you: "自己", rank: "排名", coupon: "年息",
+                infoClose: "關閉", infoTag: "知識庫", infoDSELabel: "HKDSE 企會財重點", infoFactLabel: "冷知識",
+                infoStockTitle: "股票 (股本融資)",
+                infoStockDSE: "代表公司擁有權，屬於股本融資。股東有投票權及收取股息的權利，但由於回報非保證，風險較高。",
+                infoStockFact: "世界上第一個現代股票市場於1611年在阿姆斯特丹成立，由荷蘭東印度公司發行股票籌集資金。",
+                infoBondTitle: "債券 (債務融資)",
+                infoBondDSE: "代表投資者向借款人提供的貸款，屬於債務融資。通常定期支付固定利息（票息）並在到期時償還本金。風險一般低於股票。",
+                infoBondFact: "一戰期間，美國政府發行「自由債券」籌集軍費，這項愛國運動讓債券在散戶投資者中廣泛普及。",
+                infoGoldTitle: "黃金 (實物資產)",
+                infoGoldDSE: "一種實物資產，常被用作對沖通脹和經濟動盪的避險工具。黃金本身不產生任何利息或股息，回報僅依賴價格上漲。",
+                infoGoldFact: "人類歷史上開採的所有黃金，如果全部熔合在一起，大約只能填滿一個邊長 22 米的正方體！"
             }
         };
 
@@ -267,7 +298,6 @@
             updateStaticUI();
             if (myData) { renderDeposits(myData.deposits); renderMarket(); }
             if (document.getElementById('end-screen').style.display === 'flex') {
-                // 如果在結算畫面切換語言，用暫存的原始數據重新渲染排行榜
                 if (window.lastGameOverData) {
                     renderGameOverScreen(window.lastGameOverData);
                 }
@@ -295,6 +325,11 @@
             document.getElementById('lbl-end-tag').innerText = t('endLabel');
             document.getElementById('end-title').innerText = t('endTitle');
             document.getElementById('lbl-lb').innerText = t('lbLabel');
+            
+            document.getElementById('lbl-info-tag').innerText = t('infoTag');
+            document.getElementById('lbl-info-dse').innerText = t('infoDSELabel');
+            document.getElementById('lbl-info-fact').innerText = t('infoFactLabel');
+            document.getElementById('btn-info-close').innerText = t('infoClose');
 
             const depSel = document.getElementById('deposit-duration');
             const oldVal = depSel.value || "3";
@@ -313,7 +348,7 @@
 
         const socket = io();
         let myData = null, currentMarket = null, currentRound = 0;
-        window.lastGameOverData = null; // 用於儲存結算資料以供切換語言時重繪
+        window.lastGameOverData = null; 
 
         function getUserId() {
             let uid = localStorage.getItem('stockGameUID');
@@ -439,6 +474,14 @@
             document.getElementById('modal-desc').innerText = event.desc;
             document.getElementById('news-modal').style.display = 'flex';
         }
+        
+        function showInfo(type) {
+            let keyPrefix = 'info' + type.charAt(0).toUpperCase() + type.slice(1);
+            document.getElementById('info-title').innerText = t(keyPrefix + 'Title');
+            document.getElementById('info-dse').innerText = t(keyPrefix + 'DSE');
+            document.getElementById('info-fact').innerText = t(keyPrefix + 'Fact');
+            document.getElementById('info-modal').style.display = 'flex';
+        }
 
         function updateAll(data) {
             myData = data.player;
@@ -510,7 +553,7 @@
                 return `<div class="card">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                         <div>
-                            <div style="font-weight:500; font-family: var(--font-serif); font-size:20px; letter-spacing: -0.5px;">${item.name}<span class="tag">${tagName}</span></div>
+                            <div style="font-weight:500; font-family: var(--font-serif); font-size:20px; letter-spacing: -0.5px;">${item.name}<span class="tag" onclick="showInfo('${item.type}')" title="Click to learn more">${tagName}</span></div>
                             <div style="color:var(--text-dim); font-size:10px; margin-top:6px; font-weight: 500; letter-spacing: 0.5px;">${code}${extraInfo}</div>
                         </div>
                         <div style="text-align:right;">
