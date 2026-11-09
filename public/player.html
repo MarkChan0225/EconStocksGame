@@ -116,7 +116,14 @@
         
         #final-rank-badge { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--surface); background: var(--text); border: 1px solid var(--border); padding: 6px 12px; display: inline-block; margin-bottom: 16px; font-family: var(--font-sans); }
 
-        .lang-btn { position: fixed; top: 16px; right: 16px; background: transparent; color: var(--text); border: 1px solid var(--border); padding: 6px 10px; font-size: 10px; font-weight: 600; cursor: pointer; z-index: 1000; font-family: var(--font-sans); text-transform: uppercase;}
+        /* 修復語言切換按鈕，覆蓋全域 button 樣式 */
+        .lang-btn { 
+            position: fixed; top: 16px; right: 16px; 
+            width: auto; flex: none; display: inline-block; 
+            background: transparent; color: var(--text); border: 1px solid var(--border); 
+            padding: 6px 10px; font-size: 10px; font-weight: 600; cursor: pointer; 
+            z-index: 1000; font-family: var(--font-sans); text-transform: uppercase;
+        }
 
         @media (min-width: 768px) {
             body { padding: 24px 32px; }
@@ -230,7 +237,6 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        // --- i18n Dictionary ---
         const i18n = {
             en: {
                 langBtn: "中文", simTitle: "Market Simulator", simSub: "Enter to start trading", namePlace: "Enter Name / Group", enterMarket: "Enter Market",
@@ -261,9 +267,10 @@
             updateStaticUI();
             if (myData) { renderDeposits(myData.deposits); renderMarket(); }
             if (document.getElementById('end-screen').style.display === 'flex') {
-                // Re-render final breakdown if game is over
-                const myUserId = getUserId();
-                socket.emit('request_game_over_render'); // fallback to simple refresh logic if possible, or just update UI.
+                // 如果在結算畫面切換語言，用暫存的原始數據重新渲染排行榜
+                if (window.lastGameOverData) {
+                    renderGameOverScreen(window.lastGameOverData);
+                }
             }
         }
 
@@ -306,6 +313,7 @@
 
         const socket = io();
         let myData = null, currentMarket = null, currentRound = 0;
+        window.lastGameOverData = null; // 用於儲存結算資料以供切換語言時重繪
 
         function getUserId() {
             let uid = localStorage.getItem('stockGameUID');
@@ -368,6 +376,11 @@
         });
 
         socket.on('game_over', data => {
+            window.lastGameOverData = data;
+            renderGameOverScreen(data);
+        });
+
+        function renderGameOverScreen(data) {
             document.getElementById('game-screen').style.display = 'none';
             document.getElementById('news-modal').style.display = 'none';
             
@@ -419,7 +432,7 @@
             });
             document.getElementById('final-leaderboard').innerHTML = lbHtml;
             document.getElementById('end-screen').style.display = 'flex';
-        });
+        }
 
         function showNews(event) {
             document.getElementById('modal-title').innerText = event.title;
@@ -494,7 +507,6 @@
                 let tagName = item.type === 'gold' ? 'GOLD' : (item.type === 'bond' ? 'BOND' : 'STOCK');
                 let extraInfo = item.type === 'bond' ? `<br><span class="bond-info">${t('coupon')} ${item.coupon}%</span>` : '';
                 
-                // Note: item.name is inherently traditional Chinese as required
                 return `<div class="card">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                         <div>

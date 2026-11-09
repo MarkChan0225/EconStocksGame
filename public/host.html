@@ -68,7 +68,15 @@
         #login-pass { width: 100%; padding: 16px 0; font-size: 16px; border-bottom: 2px solid var(--border); border-top: none; border-left: none; border-right: none; background: transparent; color: var(--text); outline: none; text-align: left; font-family: var(--font-sans); margin-bottom: 24px; box-sizing: border-box; transition: border-color 0.2s; }
         .empty-state { text-align: left; padding: 40px 24px; color: var(--text-dim); border: 1px solid var(--border-light); background: var(--surface); }
         .empty-state .msg { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;}
-        .lang-btn { position: fixed; top: 24px; right: 32px; background: transparent; color: var(--text); border: 1px solid var(--border); padding: 6px 10px; font-size: 10px; font-weight: 600; cursor: pointer; z-index: 1000; font-family: var(--font-sans); text-transform: uppercase;}
+        
+        /* 修復語言切換按鈕，覆蓋全域 button 樣式 */
+        .lang-btn { 
+            position: fixed; top: 24px; right: 32px; 
+            width: auto; flex: none; display: inline-block; /* 修正 100% 寬度破版問題 */
+            background: transparent; color: var(--text); border: 1px solid var(--border); 
+            padding: 8px 12px; font-size: 11px; font-weight: 600; cursor: pointer; 
+            z-index: 1000; font-family: var(--font-sans); text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
@@ -145,7 +153,6 @@
             currentLang = currentLang === 'en' ? 'tc' : 'en';
             localStorage.setItem('appLang', currentLang);
             updateStaticUI();
-            socket.emit('request_host_update'); // trigger re-render if needed, fallback to current data
             if(window.lastData) updateUIWithData(window.lastData);
         }
 
