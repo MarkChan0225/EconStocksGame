@@ -40,9 +40,8 @@
             letter-spacing: -0.5px;
         }
 
-        /* 核心佈局升級：CSS Grid */
         .app-container {
-            max-width: 1400px; /* 放寬最大寬度以容納多欄 */
+            max-width: 1400px; 
             margin: 0 auto;
         }
         .dashboard-grid {
@@ -64,7 +63,7 @@
             border: 1px solid var(--border);
             border-radius: 0;
             box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
-            height: 100%; /* 在 Grid 中對齊高度 */
+            height: 100%;
             display: flex;
             flex-direction: column;
         }
@@ -126,7 +125,7 @@
             margin: 16px 0; color: var(--text-dim); border: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center;
             text-transform: uppercase; letter-spacing: 1px;
-            margin-top: auto; /* 將持倉與交易區塊推到底部 */
+            margin-top: auto; 
         }
         .holding-bar strong { color: var(--text); font-family: var(--font-serif); font-size: 16px; letter-spacing: 0; text-transform: none;}
 
@@ -147,6 +146,7 @@
             background: var(--surface); width: 100%; max-width: 440px; padding: 40px;
             border-radius: 0; text-align: left; border: 1px solid var(--border);
             box-shadow: 12px 12px 0px rgba(0,0,0,0.1);
+            max-height: 90vh; overflow-y: auto; /* 防止內容過多超出螢幕 */
         }
         .modal-card h1 { font-size: 40px; margin-bottom: 12px; }
         .modal-card h2 { font-size: 28px; margin-bottom: 12px; }
@@ -180,6 +180,12 @@
         .deposit-form .row { display: flex; gap: 12px; }
         
         .market-price-disp { font-size: 26px; font-weight: 500; font-family: var(--font-serif); letter-spacing: -0.5px; }
+        
+        #final-rank-badge {
+            font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; 
+            color: var(--surface); background: var(--text); border: 1px solid var(--border); 
+            padding: 8px 16px; display: inline-block; margin-bottom: 24px; font-family: var(--font-sans);
+        }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .card { animation: fadeIn 0.4s ease-out; }
@@ -194,13 +200,23 @@
             <button class="btn-action" onclick="document.getElementById('news-modal').style.display='none'">我知道了</button>
         </div>
     </div>
+    
     <div id="end-screen">
         <div class="modal-card">
             <div class="modal-label">SESSION ENDED</div>
-            <h1>遊戲結束</h1>
-            <p style="margin-bottom: 24px;">最終資產結算</p>
-            <div id="final-assets" style="font-size: 48px; color: var(--text); margin-bottom: 32px; border-bottom: 2px solid var(--border); padding-bottom: 16px;">$0</div>
-            <div id="final-breakdown" style="text-align: left; background: var(--surface-2); padding: 20px; font-size: 14px; border: 1px solid var(--border);"></div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <h1>遊戲結束</h1>
+                <div id="final-rank-badge">RANK #--</div>
+            </div>
+            
+            <div id="final-assets" style="font-size: 48px; color: var(--text); margin-bottom: 24px; padding-top: 16px; border-top: 1px solid var(--border-light);">$0</div>
+            
+            <!-- 個人資產明細 -->
+            <div id="final-breakdown" style="text-align: left; background: var(--surface-2); padding: 20px; font-size: 14px; border: 1px solid var(--border); margin-bottom: 32px;"></div>
+            
+            <!-- 排名榜單 (Leaderboard) -->
+            <div class="modal-label" style="margin-bottom: 12px; border-bottom: 2px solid var(--border); padding-bottom: 8px; color: var(--text);">LEADERBOARD</div>
+            <div id="final-leaderboard"></div>
         </div>
     </div>
 
@@ -338,17 +354,78 @@
         socket.on('game_over', data => {
             document.getElementById('game-screen').style.display = 'none';
             document.getElementById('news-modal').style.display = 'none';
-            let me = data.players[socket.id] || myData;
-            let stockVal = 0;
-            for(let code in me.portfolio) if(data.market[code]) stockVal += me.portfolio[code] * data.market[code].price;
-            let depositTotal = 0;
-            if(me.deposits) me.deposits.forEach(d => depositTotal += d.amount);
-            let total = me.cash + depositTotal + stockVal;
-            document.getElementById('final-assets').innerText = '$' + Math.floor(total).toLocaleString();
+            
+            const myUserId = getUserId();
+            
+            // 1. 去重並計算所有玩家的總資產以獲得排行榜
+            let uniquePlayersMap = {};
+            for (let key in data.players) {
+                let p = data.players[key];
+                if (p && p.userId) {
+                    uniquePlayersMap[p.userId] = p;
+                }
+            }
+            
+            let allPlayers = Object.values(uniquePlayersMap).map(p => {
+                let pStockVal = 0;
+                for(let code in p.portfolio) {
+                    if(data.market[code]) pStockVal += p.portfolio[code] * data.market[code].price;
+                }
+                let pDepTotal = 0;
+                if(p.deposits) p.deposits.forEach(d => pDepTotal += d.amount);
+                return {
+                    userId: p.userId,
+                    name: p.name,
+                    total: p.cash + pDepTotal + pStockVal,
+                    cash: p.cash,
+                    depTotal: pDepTotal,
+                    stockVal: pStockVal
+                };
+            });
+            
+            // 按總資產降序排序
+            allPlayers.sort((a, b) => b.total - a.total);
+            
+            // 找出當前玩家名次
+            let myRankIndex = allPlayers.findIndex(p => p.userId === myUserId);
+            let myRank = myRankIndex + 1;
+            let totalPlayers = allPlayers.length;
+            
+            document.getElementById('final-rank-badge').innerText = `RANK #${myRank} / ${totalPlayers}`;
+            
+            // 2. 顯示個人資產明細
+            let me = allPlayers[myRankIndex];
+            
+            // 防止意外未找到的後備方案
+            if(!me) {
+                let fallbackMe = data.players[socket.id] || myData;
+                let sVal = 0; for(let c in fallbackMe.portfolio) if(data.market[c]) sVal += fallbackMe.portfolio[c] * data.market[c].price;
+                let dTotal = 0; if(fallbackMe.deposits) fallbackMe.deposits.forEach(d => dTotal += d.amount);
+                me = { cash: fallbackMe.cash, depTotal: dTotal, stockVal: sVal, total: fallbackMe.cash + dTotal + sVal };
+            }
+
+            document.getElementById('final-assets').innerText = '$' + Math.floor(me.total).toLocaleString();
             document.getElementById('final-breakdown').innerHTML =
                 `<div style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text); border-bottom: 1px solid var(--border-light); padding-bottom: 8px;"><span style="color:var(--text-dim); text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">現金 (Cash)</span> <span style="font-weight:600; font-family: var(--font-serif); font-size: 16px;">$${Math.floor(me.cash).toLocaleString()}</span></div>` +
-                `<div style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text); border-bottom: 1px solid var(--border-light); padding-bottom: 8px;"><span style="color:var(--text-dim); text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">定存 (Deposit)</span> <span style="font-weight:600; font-family: var(--font-serif); font-size: 16px;">$${Math.floor(depositTotal).toLocaleString()}</span></div>` +
-                `<div style="display:flex; justify-content:space-between; color:var(--text);"><span style="color:var(--text-dim); text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">證券 (Securities)</span> <span style="font-weight:600; font-family: var(--font-serif); font-size: 16px;">$${Math.floor(stockVal).toLocaleString()}</span></div>`;
+                `<div style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text); border-bottom: 1px solid var(--border-light); padding-bottom: 8px;"><span style="color:var(--text-dim); text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">定存 (Deposit)</span> <span style="font-weight:600; font-family: var(--font-serif); font-size: 16px;">$${Math.floor(me.depTotal).toLocaleString()}</span></div>` +
+                `<div style="display:flex; justify-content:space-between; color:var(--text);"><span style="color:var(--text-dim); text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">證券 (Securities)</span> <span style="font-weight:600; font-family: var(--font-serif); font-size: 16px;">$${Math.floor(me.stockVal).toLocaleString()}</span></div>`;
+                
+            // 3. 渲染排行榜 (前 5 名)
+            let lbHtml = '';
+            let topPlayers = allPlayers.slice(0, 5);
+            topPlayers.forEach((p, i) => {
+                let isMe = (p.userId === myUserId);
+                let textColor = isMe ? 'var(--text)' : 'var(--text-dim)';
+                let fontWeight = isMe ? '700' : '500';
+                let indicator = isMe ? `<span style="font-size: 9px; margin-left: 8px; background: var(--text); color: var(--surface); padding: 2px 6px; font-family: var(--font-sans);">YOU</span>` : '';
+                
+                lbHtml += `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; color: ${textColor}; padding-bottom: 8px; border-bottom: 1px dotted var(--border-light);">
+                    <div style="font-family: var(--font-serif); font-size: 16px; font-weight: ${fontWeight};"><span style="font-size: 12px; margin-right: 12px; font-family: var(--font-sans); color: var(--text-dim);">0${i+1}</span> ${p.name} ${indicator}</div>
+                    <div style="font-family: var(--font-serif); font-size: 16px; font-weight: ${fontWeight};">$${Math.floor(p.total).toLocaleString()}</div>
+                </div>`;
+            });
+            document.getElementById('final-leaderboard').innerHTML = lbHtml;
+
             document.getElementById('end-screen').style.display = 'flex';
         });
 
