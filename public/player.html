@@ -69,7 +69,7 @@
         .btn-action { background: var(--text); color: var(--surface); width: 100%; }
         .btn-disabled { background: var(--border-light); color: var(--text-dim); border-color: var(--border-light); pointer-events: none; }
 
-        .tag { font-size: 9px; padding: 4px 8px; border-radius: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: inline-block; vertical-align: middle; margin-left: 8px; border: 1px solid var(--border); background: transparent; color: var(--text); transition: all 0.2s;}
+        .tag { font-size: 9px; padding: 4px 8px; border-radius: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: inline-block; vertical-align: middle; border: 1px solid var(--border); background: transparent; color: var(--text); transition: all 0.2s;}
         .tag:hover { background: var(--text); color: var(--surface); cursor: pointer; }
         
         .text-up { color: var(--green); } .text-down { color: var(--red); }
@@ -88,7 +88,9 @@
 
         .trade-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
         .trade-col select { margin: 0; font-size: 12px; padding: 10px; }
-        .bond-info { font-size: 10px; color: var(--text-dim); border: 1px solid var(--border-light); padding: 2px 6px; display: inline-block; margin-top: 6px; font-weight: 500; }
+        
+        /* 修改年息標籤的排版 */
+        .bond-info { font-size: 9px; color: var(--text-dim); border: 1px solid var(--border-light); padding: 2px 4px; border-radius: 2px; display: inline-block; font-weight: 500; line-height: 1;}
 
         #news-modal, #end-screen, #info-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(245, 245, 240, 0.95); backdrop-filter: blur(4px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 12px; }
         .modal-card { background: var(--surface); width: 100%; max-width: 440px; padding: 24px; border-radius: 0; text-align: left; border: 1px solid var(--border); box-shadow: 8px 8px 0px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
@@ -150,7 +152,7 @@
     <div id="info-modal">
         <div class="modal-card">
             <div class="modal-label" id="lbl-info-tag">KNOWLEDGE BASE</div>
-            <h2 id="info-title" style="margin-bottom: 24px;">Asset</h2>
+            <h2 id="info-title" style="margin-bottom: 24px; font-family: var(--font-serif); font-weight: 500; letter-spacing: -0.5px;">Asset</h2>
             
             <div class="modal-label" id="lbl-info-dse" style="border-bottom: 1px solid var(--border-light); padding-bottom: 8px; margin-bottom: 8px; color: var(--text);">HKDSE CONCEPT</div>
             <p id="info-dse" style="margin-bottom: 24px;">...</p>
@@ -165,7 +167,7 @@
     <div id="news-modal">
         <div class="modal-card">
             <div class="modal-label" id="lbl-news-tag">BREAKING NEWS</div>
-            <h2 id="modal-title">News</h2>
+            <h2 id="modal-title" style="font-family: var(--font-serif); font-weight: 500; letter-spacing: -0.5px;">News</h2>
             <p id="modal-desc" style="margin-bottom: 32px;">...</p>
             <button class="btn-action" id="btn-news" onclick="document.getElementById('news-modal').style.display='none'">Got it</button>
         </div>
@@ -247,21 +249,21 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        // 抓取各公司或實體的線上Logo對照表
+        // 使用高可靠性的維基百科 SVG 確保圖示完美載入且解析度清晰
         const logoMap = {
-            "700": "https://logo.clearbit.com/tencent.com",
-            "2800": "https://logo.clearbit.com/ssga.com", 
-            "9988": "https://logo.clearbit.com/alibabagroup.com",
-            "9992": "https://logo.clearbit.com/popmart.com",
-            "981": "https://logo.clearbit.com/smics.com",
-            "2899": "https://logo.clearbit.com/zijinmining.com",
-            "388": "https://logo.clearbit.com/hkex.com.hk",
-            "0005": "https://logo.clearbit.com/hsbc.com",
-            "AgBank": "https://logo.clearbit.com/abchina.com",
-            "USTreasury": "https://logo.clearbit.com/treasury.gov",
-            "Airport": "https://logo.clearbit.com/hongkongairport.com",
-            "Nvidia": "https://logo.clearbit.com/nvidia.com",
-            "Apple": "https://logo.clearbit.com/apple.com",
+            "700": "https://upload.wikimedia.org/wikipedia/commons/2/22/Tencent_Logo.svg",
+            "2800": "https://upload.wikimedia.org/wikipedia/commons/8/87/State_Street_logo.svg", 
+            "9988": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Alibaba_Group_logo.svg",
+            "9992": "https://upload.wikimedia.org/wikipedia/en/2/25/Pop_Mart_logo.svg",
+            "981": "https://upload.wikimedia.org/wikipedia/commons/6/60/SMIC_logo.svg",
+            "2899": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Zijin_Mining_Logo.svg",
+            "388": "https://upload.wikimedia.org/wikipedia/en/9/91/Hong_Kong_Exchanges_and_Clearing_logo.svg",
+            "0005": "https://upload.wikimedia.org/wikipedia/commons/a/aa/HSBC_logo_%282018%29.svg",
+            "AgBank": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Agricultural_Bank_of_China.svg",
+            "USTreasury": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Seal_of_the_United_States_Department_of_the_Treasury.svg",
+            "Airport": "https://upload.wikimedia.org/wikipedia/commons/1/14/Hong_Kong_International_Airport_logo.svg",
+            "Nvidia": "https://upload.wikimedia.org/wikipedia/commons/2/21/Nvidia_logo.svg",
+            "Apple": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
             "Gold": "https://img.icons8.com/ios-filled/50/000000/gold-bars.png"
         };
 
@@ -565,22 +567,29 @@
                 let changeDisplay = change !== 0 ? `<span class="price-change ${colorClass}">${arrow} ${Math.abs(change).toFixed(2)} (${change>=0?"+":""}${pct.toFixed(1)}%)</span>` : `<span class="price-change" style="color:var(--text-dim);">—</span>`;
                 
                 let tagName = item.type === 'gold' ? 'GOLD' : (item.type === 'bond' ? 'BOND' : 'STOCK');
-                let extraInfo = item.type === 'bond' ? `<br><span class="bond-info">${t('coupon')} ${item.coupon}%</span>` : '';
+                let extraInfo = item.type === 'bond' ? `<span class="bond-info">${t('coupon')} ${item.coupon}%</span>` : '';
                 
-                // 動態取得Logo，若失敗則使用預設圖標
                 let logoSrc = logoMap[code] || 'https://img.icons8.com/ios-filled/50/000000/line-chart.png';
                 
                 return `<div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                         <div style="display:flex; align-items: center; gap: 12px;">
-                            <img src="${logoSrc}" onerror="this.onerror=null;this.src='https://img.icons8.com/ios-filled/50/000000/line-chart.png';" style="width: 32px; height: 32px; object-fit: contain; padding: 4px; border: 1px solid var(--border-light); filter: grayscale(100%); flex-shrink: 0; border-radius: 4px;">
-                            <div>
-                                <div style="font-weight:500; font-family: var(--font-serif); font-size:18px; letter-spacing: -0.5px;">${item.name}<span class="tag" onclick="showInfo('${item.type}')" title="Click to learn more">${tagName}</span></div>
-                                <div style="color:var(--text-dim); font-size:10px; margin-top:4px; font-weight: 500; letter-spacing: 0.5px;">${code}${extraInfo}</div>
+                            <div style="width: 40px; height: 40px; border: 1px solid var(--border-light); padding: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 4px; background: var(--surface);">
+                                <img src="${logoSrc}" onerror="this.onerror=null;this.src='https://img.icons8.com/ios-filled/50/000000/line-chart.png';" style="max-width: 100%; max-height: 100%; object-fit: contain; filter: grayscale(100%);">
+                            </div>
+                            <div style="display: flex; flex-direction: column; justify-content: center; gap: 6px;">
+                                <div style="font-weight:500; font-family: var(--font-serif); font-size:18px; line-height: 1; letter-spacing: -0.5px; display: flex; align-items: center; flex-wrap: wrap; gap: 6px;">
+                                    ${item.name}
+                                    <span class="tag" onclick="showInfo('${item.type}')" title="Click to learn more">${tagName}</span>
+                                </div>
+                                <div style="color:var(--text-dim); font-size:10px; font-weight: 500; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;">
+                                    <span>${code}</span>
+                                    ${extraInfo}
+                                </div>
                             </div>
                         </div>
                         <div style="text-align:right; flex-shrink: 0;">
-                            <div class="market-price-disp">$${item.price.toFixed(2)}</div>
+                            <div class="market-price-disp" style="line-height: 1;">$${item.price.toFixed(2)}</div>
                             ${changeDisplay}
                         </div>
                     </div>
